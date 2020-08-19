@@ -1,0 +1,22 @@
+label#xmlFile input {
+  display: none;
+}
+
+label#xmlFile {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  border: 2px solid lightgray;
+  border-style: dotted;
+  cursor: pointer;
+  transition: all 0.4s;
+  border-radius: 5px;
+}
+
+label#xmlFile:hover {
+  border: 2px solid lightgreen;
+  border-style: dotted;
+}
