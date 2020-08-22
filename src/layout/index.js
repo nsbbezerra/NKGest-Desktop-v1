@@ -250,12 +250,19 @@ class Layouts extends Component {
                 <img
                   src={logoNkgest}
                   alt="logo nkgest"
-                  style={{ height: 25, marginLeft: -15 }}
+                  style={{ height: 25, marginLeft: -15, marginBottom: 5 }}
+                />
+                <Icon
+                  className="custom-trigger btn-blue"
+                  type={this.state.collapse ? "menu-unfold" : "menu-fold"}
+                  onClick={() =>
+                    this.setState({ collapse: !this.state.collapse })
+                  }
                 />
               </div>
             </div>
             <PageHeader
-              style={{ width: "75%" }}
+              style={{ width: "70%" }}
               extra={[
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <div style={{ display: "flex", alignItems: "center" }}>
@@ -324,9 +331,16 @@ class Layouts extends Component {
               onCollapse={() =>
                 this.setState({ collapse: !this.state.collapse })
               }
-              style={{ height: "100%", maxHeight: "100%", overflowY: "auto" }}
+              trigger={null}
+              style={{
+                height: "100%",
+                maxHeight: "100%",
+                overflowX: "hidden",
+                borderRight: "1px solid #001529",
+              }}
+              theme="light"
             >
-              <Menu theme="dark" mode="vertical" inlineCollapsed={true}>
+              <Menu theme="light" mode="vertical" inlineCollapsed={true}>
                 <SubMenu
                   title={
                     <span className="submenu-title-wrapper">

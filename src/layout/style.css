@@ -71,3 +71,11 @@
   transition: all 0.3s;
   color: #f5222d;
 }
+
+.custom-trigger {
+  font-size: 27px;
+  color: #fff;
+  position: fixed;
+  top: 20px;
+  z-index: 200;
+}
