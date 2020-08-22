@@ -321,7 +321,7 @@ function Produtos() {
   }
 
   return (
-    <div style={{ padding: 10, height: "100%", overflowY: "auto" }}>
+    <>
       <Header>
         <p style={{ fontWeight: "bold", marginBottom: -0.01, fontSize: 18 }}>
           <Icon type="tags" style={{ fontSize: 20 }} /> CADASTRO DE PRODUTOS
@@ -1042,7 +1042,8 @@ function Produtos() {
               <Row gutter={10}>
                 <Col span={8}>
                   <label>
-                    Quantidade no Estoque<span style={{ color: "red" }}>*</span>
+                    Quantidade no Estoque
+                    <span style={{ color: "red" }}>*</span>
                   </label>
                   <Input
                     type="number"
@@ -1126,7 +1127,7 @@ function Produtos() {
           </Tabs>
         </Spin>
       </div>
-    </div>
+    </>
   );
 }
 

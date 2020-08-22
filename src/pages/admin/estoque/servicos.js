@@ -266,7 +266,7 @@ export default class GerenciaServicos extends Component {
     ];
 
     return (
-      <div style={{ padding: 10, height: "100%", overflowY: "auto" }}>
+      <>
         <Header>
           <p style={{ fontWeight: "bold", marginBottom: -0.01, fontSize: 18 }}>
             <Icon type="tool" style={{ fontSize: 20 }} /> GERENCIAR SERVIÇOS
@@ -345,7 +345,7 @@ export default class GerenciaServicos extends Component {
             </Col>
           </Row>
         </Modal>
-      </div>
+      </>
     );
   }
 }

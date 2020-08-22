@@ -204,10 +204,10 @@ function AlterarFornecedor() {
   }
 
   return (
-    <div style={{ padding: 10, height: "100%", overflowY: "auto" }}>
+    <>
       <Header>
         <p style={{ fontWeight: "bold", marginBottom: -0.01, fontSize: 18 }}>
-          <Icon type="idcard" style={{ fontSize: 20 }} /> TROCAR FORNECEDOR
+          <Icon type="idcard" style={{ fontSize: 20 }} /> ALTERAR FORNECEDOR
         </p>
         <Link to="/">
           <Button type="danger" shape="circle" icon="close" size="small" />
@@ -318,7 +318,7 @@ function AlterarFornecedor() {
           rowKey={(prod) => prod._id}
         />
       </Modal>
-    </div>
+    </>
   );
 }
 

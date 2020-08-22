@@ -85,7 +85,7 @@ function Servicos() {
   }
 
   return (
-    <div style={{ padding: 10, height: "100%", overflowY: "auto" }}>
+    <>
       <Header>
         <p style={{ fontWeight: "bold", marginBottom: -0.01, fontSize: 18 }}>
           <Icon type="tool" style={{ fontSize: 20 }} /> CADASTRO DE SERVIÇOS
@@ -151,7 +151,7 @@ function Servicos() {
           Cadastrar serviço
         </Button>
       </div>
-    </div>
+    </>
   );
 }
 

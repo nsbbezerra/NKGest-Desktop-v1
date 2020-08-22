@@ -10,8 +10,11 @@ import {
   Avatar,
   Row,
   Col,
+  Tooltip,
+  PageHeader,
+  Divider,
+  AutoComplete,
 } from "antd";
-import Scrollbars from "react-custom-scrollbars";
 import { Link, MemoryRouter, withRouter } from "react-router-dom";
 import "./style.css";
 import api from "../config/axios";
@@ -26,7 +29,7 @@ import logoNkgest from "../assets/logo.png";
 
 //** IMPORTAÇÃO DOS ÍCONES */
 
-const { Content, Header } = Layout;
+const { Content, Header, Sider } = Layout;
 const { SubMenu } = Menu;
 
 const remote = window.require("electron").remote;
@@ -196,7 +199,7 @@ class Layouts extends Component {
   render() {
     const menu = (
       <Menu>
-        <Menu.Item key="0">
+        <Menu.Item key="0" title="Configurações do Sistema">
           <Link to="/configSistema">
             <Icon type="desktop" style={{ marginRight: 5 }} />
             Sistema
@@ -227,374 +230,419 @@ class Layouts extends Component {
 
     return (
       <MemoryRouter>
-        <Layout style={{ height: "100vh" }}>
-          <Header style={{ height: "45px" }}>
+        <Layout
+          style={{
+            height: "100vh",
+            maxHeight: "100vh",
+            border: "2px solid #001529",
+          }}
+        >
+          <Header
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
             <div className="cabecalho-app">
-              <Avatar src={sgomIcon} size="default" />
+              <Avatar src={sgomIcon} size="large" />
               <div>
                 <img
                   src={logoNkgest}
                   alt="logo nkgest"
-                  style={{ height: 20, marginLeft: -15, marginRight: -20 }}
+                  style={{ height: 25, marginLeft: -15 }}
                 />
               </div>
             </div>
-            <Menu theme="dark" mode="horizontal" style={{ lineHeight: "45px" }}>
-              <SubMenu
+            <PageHeader
+              style={{ width: "75%" }}
+              extra={[
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <Avatar size="default" icon="user" />
+                    <span
+                      style={{ color: "#fff", fontWeight: 600, width: "250px" }}
+                    >
+                      NATANAEL DOS SANTOS BEZERRA
+                    </span>
+                  </div>
+                  <Divider type="vertical" />
+                  <AutoComplete style={{ width: 200 }}>
+                    <Input
+                      prefix={
+                        <Icon type="search" placeholder="Buscar na Aplicação" />
+                      }
+                    />
+                  </AutoComplete>
+                  <Divider type="vertical" />
+                  <Dropdown overlay={menu} placement="bottomCenter">
+                    <Button icon="tool" type="primary" />
+                  </Dropdown>
+                </div>,
+              ]}
+            />
+            <div className="btn-app-container">
+              <Tooltip title="Minimizar">
+                <button
+                  className="btn-header btn-blue"
+                  onClick={() => this.handleMinimize()}
+                >
+                  <Icon type="minus" />
+                </button>
+              </Tooltip>
+              <Tooltip
                 title={
-                  <span className="submenu-title-wrapper">
-                    <Icon type="tool" />
-                    Administrativo
-                  </span>
+                  this.state.maximized === true ? "Redimensionar" : "Maximizar"
                 }
-                disabled={this.state.admin}
               >
-                <Menu.ItemGroup title="Pessoas">
-                  <Menu.Item key="setting:1">
-                    <Link to="/gerenciarFuncionario">
-                      <Icon type="idcard" /> Gerenciar Funcionários
-                    </Link>
-                  </Menu.Item>
-                  <Menu.Item key="setting:2">
-                    <Link to="/gestaoDeClientes">
-                      <Icon type="team" /> Gerenciar Clientes
-                    </Link>
-                  </Menu.Item>
-                  <Menu.Item key="setting:3">
-                    <Link to="/gerenciarFornecedor">
-                      <Icon type="shopping-cart" /> Gerenciar Fornecedores
-                    </Link>
-                  </Menu.Item>
-                </Menu.ItemGroup>
-                <Menu.ItemGroup title="Produtos / Serviços">
-                  <Menu.Item key="setting:4">
-                    <Link to="/gerenciarProdutos">
-                      <Icon type="tags" /> Gerenciar Produtos
-                    </Link>
-                  </Menu.Item>
-                  <Menu.Item key="setting:5">
-                    <Link to="/gerenciarServicos">
-                      <Icon type="tool" /> Gerenciar Serviços
-                    </Link>
-                  </Menu.Item>
-                  <Menu.Item key="setting:6">
-                    <Link to="/changeDespach">
-                      <Icon type="shopping-cart" /> Alterar Fornecedor
-                    </Link>
-                  </Menu.Item>
-                </Menu.ItemGroup>
-                <Menu.ItemGroup title="Vendas e Ordens de Serviços">
-                  <Menu.Item key="setting:8">
-                    <Link to="/gerenciarVendas">
-                      <Icon type="shopping" /> Gerenciar Vendas / Ordens
-                    </Link>
-                  </Menu.Item>
-                </Menu.ItemGroup>
-              </SubMenu>
-              <SubMenu
-                title={
-                  <span className="submenu-title-wrapper">
-                    <Icon type="folder-add" />
-                    Cadastros
-                  </span>
-                }
-                disabled={this.state.admin}
-              >
-                <Menu.Item key="setting:9">
-                  <Link to="/clients">
-                    <Icon type="user" /> Clientes
-                  </Link>
-                </Menu.Item>
-                <Menu.Item key="setting:11">
-                  <Link to="/locations">
-                    <Icon type="environment" /> Endereços
-                  </Link>
-                </Menu.Item>
-                <Menu.Item key="setting:12">
-                  <Link to="/fornecers">
-                    <Icon type="shopping-cart" /> Fornecedores
-                  </Link>
-                </Menu.Item>
-                <Menu.Item key="setting:13">
-                  <Link to="/products">
-                    <Icon type="tags" /> Produtos
-                  </Link>
-                </Menu.Item>
-                <Menu.Item key="setting:14">
-                  <Link to="/services">
-                    <Icon type="tool" /> Serviços
-                  </Link>
-                </Menu.Item>
-                <Menu.Item key="setting:15">
-                  <Link to="/func">
-                    <Icon type="idcard" /> Funcionários
-                  </Link>
-                </Menu.Item>
-              </SubMenu>
+                <button
+                  className="btn-header btn-blue"
+                  onClick={() => this.handleMaximize()}
+                >
+                  {this.state.maximized === true ? (
+                    <Icon type="shrink" />
+                  ) : (
+                    <Icon type="arrows-alt" />
+                  )}
+                </button>
+              </Tooltip>
+              <Tooltip title="Fechar">
+                <button
+                  className="btn-header btn-red"
+                  onClick={() => this.handleClose()}
+                >
+                  <Icon type="close" />
+                </button>
+              </Tooltip>
+            </div>
+          </Header>
 
-              <SubMenu
-                title={
-                  <span className="submenu-title-wrapper">
-                    <Icon type="container" />
-                    Estoque
-                  </span>
-                }
-                disabled={this.state.admin}
-              >
-                <Menu.Item key="setting:16">
-                  <Link to="/controlStoque">
-                    <Icon type="control" /> Ajustar Estoque
-                  </Link>
-                </Menu.Item>
-                <Menu.Item key="setting:17">
-                  <Link to="/addBuy">
-                    <Icon type="plus" /> Adicionar Compra
-                  </Link>
-                </Menu.Item>
-                <Menu.Item key="setting:66">
-                  <Link to="/xmlImport">
-                    <Icon type="file-excel" /> Importar XML
-                  </Link>
-                </Menu.Item>
-                <Menu.Item key="setting:19">
-                  <Link to="/tags">
-                    <Icon type="tags" /> Etiquetas
-                  </Link>
-                </Menu.Item>
-                <Menu.Item key="setting:49">
-                  <Link to="/updatedTaxes">
-                    <Icon type="percentage" /> Atualizar Impostos
-                  </Link>
-                </Menu.Item>
-              </SubMenu>
-
-              <SubMenu
-                title={
-                  <span className="submenu-title-wrapper">
-                    <Icon type="shopping-cart" />
-                    Vendas
-                  </span>
-                }
-                disabled={this.state.sale}
-              >
-                <Menu.ItemGroup title="Vendas / Ordens">
-                  <Menu.Item key="setting:20">
-                    <Link to="/balcao">
-                      <Icon type="shopping" /> Balcão de Vendas
-                    </Link>
-                  </Menu.Item>
-                  <Menu.Item key="setting:21">
-                    <Link to="/ordemDeServico">
-                      <Icon type="file-text" /> Ordem de Serviço
-                    </Link>
-                  </Menu.Item>
-                  <Menu.Item key="setting:22">
-                    <Link to="/orcamentos">
-                      <Icon type="container" /> Orçamento de Vendas
-                    </Link>
-                  </Menu.Item>
-                  <Menu.Item key="setting:23">
-                    <Link to="/ordersWait">
-                      <Icon type="container" /> Orçamento de Ordens de Serviço
-                    </Link>
-                  </Menu.Item>
-                </Menu.ItemGroup>
-                <Menu.ItemGroup title="Cadastros">
-                  <Menu.Item key="setting:25">
+          <Layout style={{ height: "100%", overflowY: "auto" }}>
+            <Sider
+              collapsed={this.state.collapse}
+              collapsible
+              onCollapse={() =>
+                this.setState({ collapse: !this.state.collapse })
+              }
+              style={{ height: "100%", maxHeight: "100%", overflowY: "auto" }}
+            >
+              <Menu theme="dark" mode="vertical" inlineCollapsed={true}>
+                <SubMenu
+                  title={
+                    <span className="submenu-title-wrapper">
+                      <Icon type="tool" />
+                      <span>Administrativo</span>
+                    </span>
+                  }
+                  disabled={this.state.admin}
+                >
+                  <Menu.ItemGroup title="Pessoas">
+                    <Menu.Item key="setting:1">
+                      <Link to="/gerenciarFuncionario">
+                        <Icon type="idcard" /> Gerenciar Funcionários
+                      </Link>
+                    </Menu.Item>
+                    <Menu.Item key="setting:2">
+                      <Link to="/gestaoDeClientes">
+                        <Icon type="team" /> Gerenciar Clientes
+                      </Link>
+                    </Menu.Item>
+                    <Menu.Item key="setting:3">
+                      <Link to="/gerenciarFornecedor">
+                        <Icon type="shopping-cart" /> Gerenciar Fornecedores
+                      </Link>
+                    </Menu.Item>
+                  </Menu.ItemGroup>
+                  <Menu.ItemGroup title="Produtos / Serviços">
+                    <Menu.Item key="setting:4">
+                      <Link to="/gerenciarProdutos">
+                        <Icon type="tags" /> Gerenciar Produtos
+                      </Link>
+                    </Menu.Item>
+                    <Menu.Item key="setting:5">
+                      <Link to="/gerenciarServicos">
+                        <Icon type="tool" /> Gerenciar Serviços
+                      </Link>
+                    </Menu.Item>
+                    <Menu.Item key="setting:6">
+                      <Link to="/changeDespach">
+                        <Icon type="shopping-cart" /> Alterar Fornecedor
+                      </Link>
+                    </Menu.Item>
+                  </Menu.ItemGroup>
+                  <Menu.ItemGroup title="Vendas e Ordens de Serviços">
+                    <Menu.Item key="setting:8">
+                      <Link to="/gerenciarVendas">
+                        <Icon type="shopping" /> Gerenciar Vendas / Ordens
+                      </Link>
+                    </Menu.Item>
+                  </Menu.ItemGroup>
+                </SubMenu>
+                <SubMenu
+                  title={
+                    <span className="submenu-title-wrapper">
+                      <Icon type="folder-add" />
+                      <span>Cadastros</span>
+                    </span>
+                  }
+                  disabled={this.state.admin}
+                >
+                  <Menu.Item key="setting:9">
                     <Link to="/clients">
                       <Icon type="user" /> Clientes
                     </Link>
                   </Menu.Item>
-                  <Menu.Item key="setting:27">
+                  <Menu.Item key="setting:11">
                     <Link to="/locations">
                       <Icon type="environment" /> Endereços
                     </Link>
                   </Menu.Item>
-                </Menu.ItemGroup>
-              </SubMenu>
+                  <Menu.Item key="setting:12">
+                    <Link to="/fornecers">
+                      <Icon type="shopping-cart" /> Fornecedores
+                    </Link>
+                  </Menu.Item>
+                  <Menu.Item key="setting:13">
+                    <Link to="/products">
+                      <Icon type="tags" /> Produtos
+                    </Link>
+                  </Menu.Item>
+                  <Menu.Item key="setting:14">
+                    <Link to="/services">
+                      <Icon type="tool" /> Serviços
+                    </Link>
+                  </Menu.Item>
+                  <Menu.Item key="setting:15">
+                    <Link to="/func">
+                      <Icon type="idcard" /> Funcionários
+                    </Link>
+                  </Menu.Item>
+                </SubMenu>
 
-              <SubMenu
-                title={
-                  <span className="submenu-title-wrapper">
-                    <Icon type="calculator" />
-                    Caixa
-                  </span>
-                }
-                disabled={this.state.caixa}
-              >
-                <Menu.Item key="setting:28">
-                  <Link to="/caixa">
-                    <Icon type="calculator" /> Caixa Diário
+                <SubMenu
+                  title={
+                    <span className="submenu-title-wrapper">
+                      <Icon type="container" />
+                      <span>Estoque</span>
+                    </span>
+                  }
+                  disabled={this.state.admin}
+                >
+                  <Menu.Item key="setting:16">
+                    <Link to="/controlStoque">
+                      <Icon type="control" /> Ajustar Estoque
+                    </Link>
+                  </Menu.Item>
+                  <Menu.Item key="setting:17">
+                    <Link to="/addBuy">
+                      <Icon type="plus" /> Adicionar Compra
+                    </Link>
+                  </Menu.Item>
+                  <Menu.Item key="setting:66">
+                    <Link to="/xmlImport">
+                      <Icon type="file-excel" /> Importar XML
+                    </Link>
+                  </Menu.Item>
+                  <Menu.Item key="setting:19">
+                    <Link to="/tags">
+                      <Icon type="tags" /> Etiquetas
+                    </Link>
+                  </Menu.Item>
+                </SubMenu>
+
+                <SubMenu
+                  title={
+                    <span className="submenu-title-wrapper">
+                      <Icon type="shopping-cart" />
+                      <span>Vendas</span>
+                    </span>
+                  }
+                  disabled={this.state.sale}
+                >
+                  <Menu.ItemGroup title="Vendas / Ordens">
+                    <Menu.Item key="setting:20">
+                      <Link to="/balcao">
+                        <Icon type="shopping" /> Balcão de Vendas
+                      </Link>
+                    </Menu.Item>
+                    <Menu.Item key="setting:21">
+                      <Link to="/ordemDeServico">
+                        <Icon type="file-text" /> Ordem de Serviço
+                      </Link>
+                    </Menu.Item>
+                    <Menu.Item key="setting:22">
+                      <Link to="/orcamentos">
+                        <Icon type="container" /> Orçamento de Vendas
+                      </Link>
+                    </Menu.Item>
+                    <Menu.Item key="setting:23">
+                      <Link to="/ordersWait">
+                        <Icon type="container" /> Orçamento de Ordens de Serviço
+                      </Link>
+                    </Menu.Item>
+                  </Menu.ItemGroup>
+                  <Menu.ItemGroup title="Cadastros">
+                    <Menu.Item key="setting:25">
+                      <Link to="/clients">
+                        <Icon type="user" /> Clientes
+                      </Link>
+                    </Menu.Item>
+                    <Menu.Item key="setting:27">
+                      <Link to="/locations">
+                        <Icon type="environment" /> Endereços
+                      </Link>
+                    </Menu.Item>
+                  </Menu.ItemGroup>
+                </SubMenu>
+
+                <SubMenu
+                  title={
+                    <span className="submenu-title-wrapper">
+                      <Icon type="calculator" />
+                      <span>Caixa</span>
+                    </span>
+                  }
+                  disabled={this.state.caixa}
+                >
+                  <Menu.Item key="setting:28">
+                    <Link to="/caixa">
+                      <Icon type="calculator" /> Caixa Diário
+                    </Link>
+                  </Menu.Item>
+                  <Menu.ItemGroup title="Emissão de Boletos">
+                    <Menu.Item key="setting:32">
+                      <Link to="/boletos">
+                        <Icon type="barcode" /> Emitir Boleto
+                      </Link>
+                    </Menu.Item>
+                  </Menu.ItemGroup>
+                  <Menu.ItemGroup title="Vendas / Ordens">
+                    <Menu.Item key="setting:81">
+                      <Link to="/gerenciarVendas">
+                        <Icon type="shopping" /> Gerenciar Vendas
+                      </Link>
+                    </Menu.Item>
+                    <Menu.Item key="setting:83">
+                      <Link to="/gerenciarVendas">
+                        <Icon type="file-text" /> Gerenciar Ordens
+                      </Link>
+                    </Menu.Item>
+                  </Menu.ItemGroup>
+                </SubMenu>
+
+                <SubMenu
+                  title={
+                    <span className="submenu-title-wrapper">
+                      <Icon type="line-chart" />
+                      <span>Financeiro</span>
+                    </span>
+                  }
+                  disabled={this.state.admin}
+                >
+                  <Menu.ItemGroup title="Lançamentos">
+                    <Menu.Item key="setting:34">
+                      <Link to="/contasPagar">
+                        <Icon type="fall" /> Contas a Pagar
+                      </Link>
+                    </Menu.Item>
+                    <Menu.Item key="setting:35">
+                      <Link to="/contasReceber">
+                        <Icon type="rise" /> Contas a Receber
+                      </Link>
+                    </Menu.Item>
+                  </Menu.ItemGroup>
+                  <Menu.ItemGroup title="Dados Financeiros">
+                    <Menu.Item key="setting:37">
+                      <Link to="/contasBancarias">
+                        <Icon type="bank" /> Contas Bancárias
+                      </Link>
+                    </Menu.Item>
+                    <Menu.Item key="setting:38">
+                      <Link to="/formaDePagamento">
+                        <Icon type="credit-card" /> Forma de Pagamentos
+                      </Link>
+                    </Menu.Item>
+                    <Menu.Item key="setting:39">
+                      <Link to="/planoDeContas">
+                        <Icon type="fund" /> Plano de Contas
+                      </Link>
+                    </Menu.Item>
+                    <Menu.Item key="setting:40">
+                      <Link to="/cheques">
+                        <Icon type="idcard" /> Controle de Cheques
+                      </Link>
+                    </Menu.Item>
+                  </Menu.ItemGroup>
+                  <Menu.ItemGroup title="Pagamentos">
+                    <Menu.Item key="setting:41">
+                      <Link to="/gerPagamentos">
+                        <Icon type="dollar" /> Gerenciar Pagamentos
+                      </Link>
+                    </Menu.Item>
+                  </Menu.ItemGroup>
+                  <Menu.ItemGroup title="Comissões">
+                    <Menu.Item key="setting:42">
+                      <Link to="/comissionsFunc">
+                        <Icon type="percentage" /> Gerenciar Comissões
+                      </Link>
+                    </Menu.Item>
+                  </Menu.ItemGroup>
+                </SubMenu>
+
+                <SubMenu
+                  title={
+                    <span className="submenu-title-wrapper">
+                      <Icon type="read" />
+                      <span>Relatórios</span>
+                    </span>
+                  }
+                  disabled={this.state.admin}
+                >
+                  <Menu.ItemGroup title="Relatório de Cadastros">
+                    <Menu.Item key="setting:43">
+                      <Link to="/relatoriosCadastro">
+                        <Icon type="profile" /> Cadastros
+                      </Link>
+                    </Menu.Item>
+                    <Menu.Item key="setting:44">
+                      <Link to="/relatoriosEstoque">
+                        <Icon type="tags" /> Produtos e Serviços
+                      </Link>
+                    </Menu.Item>
+                    <Menu.Item key="setting:45">
+                      <Link to="/relatorioVendas">
+                        <Icon type="shopping" /> Vendas e Ordens
+                      </Link>
+                    </Menu.Item>
+                  </Menu.ItemGroup>
+                  <Menu.ItemGroup title="Relatório Financeiro">
+                    <Menu.Item key="setting:46">
+                      <Link to="/relatoriosFinanceiro">
+                        <Icon type="calculator" /> Relatório Financeiro
+                      </Link>
+                    </Menu.Item>
+                  </Menu.ItemGroup>
+                </SubMenu>
+                <Menu.Item key="setting:97" disabled={this.state.caixa}>
+                  <Link to="/invoices">
+                    <Icon type="file-text" /> <span>Notas Fiscais</span>
                   </Link>
                 </Menu.Item>
-                <Menu.ItemGroup title="Emissão de Boletos">
-                  <Menu.Item key="setting:32">
-                    <Link to="/boletos">
-                      <Icon type="barcode" /> Emitir Boleto
-                    </Link>
-                  </Menu.Item>
-                </Menu.ItemGroup>
-                <Menu.ItemGroup title="Vendas / Ordens">
-                  <Menu.Item key="setting:81">
-                    <Link to="/gerenciarVendas">
-                      <Icon type="shopping" /> Gerenciar Vendas
-                    </Link>
-                  </Menu.Item>
-                  <Menu.Item key="setting:83">
-                    <Link to="/gerenciarVendas">
-                      <Icon type="file-text" /> Gerenciar Ordens
-                    </Link>
-                  </Menu.Item>
-                </Menu.ItemGroup>
-              </SubMenu>
+              </Menu>
+            </Sider>
 
-              <SubMenu
-                title={
-                  <span className="submenu-title-wrapper">
-                    <Icon type="line-chart" />
-                    Financeiro
-                  </span>
-                }
-                disabled={this.state.admin}
-              >
-                <Menu.ItemGroup title="Lançamentos">
-                  <Menu.Item key="setting:34">
-                    <Link to="/contasPagar">
-                      <Icon type="fall" /> Contas a Pagar
-                    </Link>
-                  </Menu.Item>
-                  <Menu.Item key="setting:35">
-                    <Link to="/contasReceber">
-                      <Icon type="rise" /> Contas a Receber
-                    </Link>
-                  </Menu.Item>
-                </Menu.ItemGroup>
-                <Menu.ItemGroup title="Dados Financeiros">
-                  <Menu.Item key="setting:37">
-                    <Link to="/contasBancarias">
-                      <Icon type="bank" /> Contas Bancárias
-                    </Link>
-                  </Menu.Item>
-                  <Menu.Item key="setting:38">
-                    <Link to="/formaDePagamento">
-                      <Icon type="credit-card" /> Forma de Pagamentos
-                    </Link>
-                  </Menu.Item>
-                  <Menu.Item key="setting:39">
-                    <Link to="/planoDeContas">
-                      <Icon type="fund" /> Plano de Contas
-                    </Link>
-                  </Menu.Item>
-                  <Menu.Item key="setting:40">
-                    <Link to="/cheques">
-                      <Icon type="idcard" /> Controle de Cheques
-                    </Link>
-                  </Menu.Item>
-                </Menu.ItemGroup>
-                <Menu.ItemGroup title="Pagamentos">
-                  <Menu.Item key="setting:41">
-                    <Link to="/gerPagamentos">
-                      <Icon type="dollar" /> Gerenciar Pagamentos
-                    </Link>
-                  </Menu.Item>
-                </Menu.ItemGroup>
-                <Menu.ItemGroup title="Comissões">
-                  <Menu.Item key="setting:42">
-                    <Link to="/comissionsFunc">
-                      <Icon type="percentage" /> Gerenciar Comissões
-                    </Link>
-                  </Menu.Item>
-                </Menu.ItemGroup>
-              </SubMenu>
-
-              <SubMenu
-                title={
-                  <span className="submenu-title-wrapper">
-                    <Icon type="read" />
-                    Relatórios
-                  </span>
-                }
-                disabled={this.state.admin}
-              >
-                <Menu.ItemGroup title="Relatório de Cadastros">
-                  <Menu.Item key="setting:43">
-                    <Link to="/relatoriosCadastro">
-                      <Icon type="profile" /> Cadastros
-                    </Link>
-                  </Menu.Item>
-                  <Menu.Item key="setting:44">
-                    <Link to="/relatoriosEstoque">
-                      <Icon type="tags" /> Produtos e Serviços
-                    </Link>
-                  </Menu.Item>
-                  <Menu.Item key="setting:45">
-                    <Link to="/relatorioVendas">
-                      <Icon type="shopping" /> Vendas e Ordens
-                    </Link>
-                  </Menu.Item>
-                </Menu.ItemGroup>
-                <Menu.ItemGroup title="Relatório Financeiro">
-                  <Menu.Item key="setting:46">
-                    <Link to="/relatoriosFinanceiro">
-                      <Icon type="calculator" /> Relatório Financeiro
-                    </Link>
-                  </Menu.Item>
-                </Menu.ItemGroup>
-              </SubMenu>
-              <Menu.Item key="setting:97" disabled={this.state.caixa}>
-                <Link to="/invoices">
-                  <Icon type="file-text" /> <span>Notas Fiscais</span>
-                </Link>
-              </Menu.Item>
-            </Menu>
-
-            <div className="btn-app-container">
-              <button
-                className="btn-header btn-blue"
-                onClick={() => this.handleMinimize()}
-              >
-                <Icon type="minus" />
-              </button>
-              <button
-                className="btn-header btn-blue"
-                onClick={() => this.handleMaximize()}
-              >
-                {this.state.maximized === true ? (
-                  <Icon type="shrink" />
-                ) : (
-                  <Icon type="arrows-alt" />
-                )}
-              </button>
-              <button
-                className="btn-header btn-red"
-                onClick={() => this.handleClose()}
-              >
-                <Icon type="close" />
-              </button>
-            </div>
-          </Header>
-
-          <Layout style={{ height: "100%" }}>
-            <Layout>
+            <Layout style={{ height: "100%", padding: 10 }}>
               <Content
                 style={{
                   margin: 0,
                   height: "100%",
+                  overflowY: "auto",
+                  overflowX: "hidden",
+                  background: "#fff",
+                  padding: 10,
                 }}
               >
-                <div
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    backgroundColor: "#fff",
-                    border: "2px solid #001529",
-                    overflow: "hidden",
-                  }}
-                >
-                  <Scrollbars autoHide>
-                    <Routes />
-                  </Scrollbars>
-                </div>
+                <Routes />
               </Content>
             </Layout>
           </Layout>

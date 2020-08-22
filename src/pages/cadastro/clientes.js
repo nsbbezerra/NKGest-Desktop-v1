@@ -286,7 +286,7 @@ function Clientes() {
   }
 
   return (
-    <div style={{ padding: 10, height: "100%", overflowY: "auto" }}>
+    <>
       <Header>
         <p style={{ fontWeight: "bold", marginBottom: -0.01, fontSize: 18 }}>
           <Icon type="team" style={{ fontSize: 20 }} /> CADASTRO DE CLIENTES
@@ -774,7 +774,7 @@ function Clientes() {
           </Row>
         </Modal>
       </div>
-    </div>
+    </>
   );
 }
 

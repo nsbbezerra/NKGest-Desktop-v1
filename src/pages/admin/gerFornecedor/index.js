@@ -203,7 +203,7 @@ export default function GerFornecedor() {
   ];
 
   return (
-    <div style={{ padding: 10, height: "100%", overflowY: "auto" }}>
+    <>
       <Header>
         <p style={{ fontWeight: "bold", marginBottom: -0.01, fontSize: 18 }}>
           <Icon type="idcard" style={{ fontSize: 20 }} /> GERENCIAR FORNECEDOR
@@ -347,6 +347,6 @@ export default function GerFornecedor() {
           </Col>
         </Row>
       </Modal>
-    </div>
+    </>
   );
 }

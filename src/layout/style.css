@@ -26,8 +26,6 @@
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  float: left;
-  margin-top: -10px;
   margin-left: -20px;
 }
 
@@ -48,9 +46,7 @@
 
 .btn-app-container {
   display: flex;
-  position: absolute;
-  top: 0;
-  right: 10px;
+  margin-right: -35px;
 }
 
 .btn-header {
@@ -61,7 +57,7 @@
   background: none;
   border: none;
   color: #fff;
-  font-size: 18px;
+  font-size: 17px;
   cursor: pointer;
   outline: none;
 }

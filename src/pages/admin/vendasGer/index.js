@@ -65,9 +65,6 @@ export default function GerVendas() {
   const [brutoValue, setBrutoValue] = useState(0);
   const [liquidValue, setLiquidoValue] = useState(0);
 
-  const [collapse, setCollapse] = useState(true);
-  const [component, setComponent] = useState("vendas");
-
   function erro(title, message) {
     Modal.error({
       title: title,
@@ -393,7 +390,7 @@ export default function GerVendas() {
           </Tooltip>
         </>
       ),
-      width: "8%",
+      width: "10%",
       align: "center",
     },
   ];
@@ -496,7 +493,7 @@ export default function GerVendas() {
           </Tooltip>
         </>
       ),
-      width: "8%",
+      width: "10%",
       align: "center",
     },
   ];
@@ -707,82 +704,76 @@ export default function GerVendas() {
 
   return (
     <>
-      <Layout style={{ height: "100%", width: "100%" }}>
-        <Sider
-          collapsed={collapse}
-          collapsible
-          onCollapse={() => setCollapse(!collapse)}
+      <Header style={{ marginBottom: 10 }}>
+        <p
+          style={{
+            fontWeight: "bold",
+            marginBottom: -0.01,
+            fontSize: 18,
+          }}
         >
-          <Menu theme="dark" defaultSelectedKeys="vendas">
-            <Menu.Item key="vendas" onClick={() => setComponent("vendas")}>
-              <Icon type="shopping" /> <span>Vendas</span>
-            </Menu.Item>
-            <Menu.Item key="ordens" onClick={() => setComponent("ordens")}>
-              <Icon type="file-text" /> <span>Ordens de Serviço</span>
-            </Menu.Item>
-          </Menu>
-        </Sider>
-        <Layout>
-          <Content
-            style={{
-              background: "#fff",
-              padding: 10,
-              overflowY: "auto",
-            }}
-          >
-            <Header style={{ marginBottom: 10 }}>
-              <p
-                style={{
-                  fontWeight: "bold",
-                  marginBottom: -0.01,
-                  fontSize: 18,
-                }}
-              >
-                <Icon type="shopping" style={{ fontSize: 20 }} />
-                {component === "vendas"
-                  ? "GERENCIAR VENDAS"
-                  : `GERENCIAR ORDENS DE SERVIÇO`}
-              </p>
-              <Link to="/">
-                <Button
-                  type="danger"
-                  shape="circle"
-                  icon="close"
-                  size="small"
-                />
-              </Link>
-            </Header>
-            <Spin spinning={spinner} size="large">
-              <Button
-                style={{ marginBottom: 10 }}
-                icon="search"
-                type="primary"
-                onClick={() => setModalSearch(true)}
-              >
-                Busca Avançada
-              </Button>
-              {component === "vendas" && (
-                <Table
-                  pagination={{ pageSize: 10 }}
-                  columns={columnSalesPay}
-                  dataSource={vendas}
-                  size="small"
-                  rowKey={(cli) => cli._id}
-                />
-              )}
-              {component === "ordens" && (
-                <Table
-                  pagination={{ pageSize: 10 }}
-                  columns={columnServicesPay}
-                  dataSource={ordens}
-                  size="small"
-                  rowKey={(cli) => cli._id}
-                />
-              )}
-            </Spin>
-          </Content>
-        </Layout>
-      </Layout>
+          <Icon type="shopping" style={{ fontSize: 20 }} />
+          GERENCIAR VENDAS / GERENCIAR ORDENS DE SERVIÇO
+        </p>
+        <Link to="/">
+          <Button type="danger" shape="circle" icon="close" size="small" />
+        </Link>
+      </Header>
+      <Tabs>
+        <TabPane
+          tab={
+            <span>
+              <Icon type="shopping" />
+              Vendas
+            </span>
+          }
+          key="1"
+        >
+          <Spin spinning={spinner} size="large">
+            <Button
+              style={{ position: "absolute", right: 0, top: -55 }}
+              icon="search"
+              type="primary"
+              onClick={() => setModalSearch(true)}
+            >
+              Busca Avançada
+            </Button>
+            <Table
+              columns={columnSalesPay}
+              dataSource={vendas}
+              size="small"
+              rowKey={(cli) => cli._id}
+            />
+          </Spin>
+        </TabPane>
+        <TabPane
+          tab={
+            <span>
+              <Icon type="file-text" />
+              Ordens de Serviço
+            </span>
+          }
+          key="2"
+        >
+          <Spin spinning={spinner} size="large">
+            <Button
+              style={{ position: "absolute", right: 0, top: -55 }}
+              icon="search"
+              type="primary"
+              onClick={() => setModalSearch(true)}
+            >
+              Busca Avançada
+            </Button>
+            <Table
+              pagination={{ pageSize: 10 }}
+              columns={columnServicesPay}
+              dataSource={ordens}
+              size="small"
+              rowKey={(cli) => cli._id}
+            />
+          </Spin>
+        </TabPane>
+      </Tabs>
       <Modal
         visible={modalSearch}
         onCancel={() => setModalSearch(false)}

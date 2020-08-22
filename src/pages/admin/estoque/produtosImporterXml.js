@@ -1146,7 +1146,7 @@ export default class GerenciaProdutosChanged extends Component {
           <Button
             icon="sync"
             type="primary"
-            style={{ marginBottom: 10 }}
+            style={{ position: "absolute", right: 0, top: 5 }}
             onClick={() => this.findProducts()}
           >
             Atualizar Produtos

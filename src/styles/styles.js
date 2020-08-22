@@ -35,6 +35,7 @@ export const Header = styled.div`
   align-items: center;
   width: 100%;
   border-bottom: 1px solid lightgray;
+  margin-bottom: 10px;
 `;
 
 export const DividerStyle = styled.div`

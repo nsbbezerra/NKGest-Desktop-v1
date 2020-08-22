@@ -8,7 +8,6 @@ import {
   Input,
   Row,
   Col,
-  Divider,
   Select,
   Radio,
   Modal,
@@ -20,7 +19,6 @@ import InputMask from "react-input-mask";
 import { Link } from "react-router-dom";
 import { Header } from "../../../styles/styles";
 import api from "../../../config/axios";
-import TextMask from "react-text-mask";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -437,6 +435,7 @@ export default class GestaoDeClientes extends Component {
         dataIndex: "socialName",
         key: "socialName",
         ...this.getColumnSearchProps("socialName"),
+        ellipsis: true,
       },
       {
         title: "CPF / CNPJ",
@@ -485,7 +484,7 @@ export default class GestaoDeClientes extends Component {
             />
           </>
         ),
-        width: "6%",
+        width: "6.5%",
         align: "center",
       },
       {
@@ -505,13 +504,13 @@ export default class GestaoDeClientes extends Component {
             </Tooltip>
           </>
         ),
-        width: "7%",
+        width: "5%",
         align: "center",
       },
     ];
 
     return (
-      <div style={{ padding: 10, height: "100%", overflowY: "auto" }}>
+      <>
         <Header>
           <p style={{ fontWeight: "bold", marginBottom: -0.01, fontSize: 18 }}>
             <Icon type="team" style={{ fontSize: 20 }} /> GESTÃO DE CLIENTES
@@ -525,7 +524,6 @@ export default class GestaoDeClientes extends Component {
           <Button
             icon="search"
             type="primary"
-            style={{ marginTop: 10 }}
             onClick={() => this.setState({ modalAdvancedFind: true })}
           >
             Busca Avançada
@@ -1165,7 +1163,7 @@ export default class GestaoDeClientes extends Component {
         >
           <p>Tem certeza que deseja excluir este endereço?</p>
         </Modal>
-      </div>
+      </>
     );
   }
 }

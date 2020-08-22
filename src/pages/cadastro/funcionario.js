@@ -10,6 +10,7 @@ import {
   Switch,
   Card,
   Modal,
+  Layout,
 } from "antd";
 import InputMask from "react-input-mask";
 import { Header } from "../../styles/styles";
@@ -170,7 +171,7 @@ function Funcionarios() {
   }
 
   return (
-    <div style={{ padding: 10, height: "100%", overflowY: "auto" }}>
+    <>
       <Header>
         <p style={{ fontWeight: "bold", marginBottom: -0.01, fontSize: 18 }}>
           <Icon type="idcard" style={{ fontSize: 20 }} /> CADASTRO DE
@@ -469,7 +470,7 @@ function Funcionarios() {
           Cadastrar Funcionário
         </Button>
       </div>
-    </div>
+    </>
   );
 }
 

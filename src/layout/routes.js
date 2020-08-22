@@ -57,8 +57,6 @@ import GerenciarVendas from "../pages/admin/vendasGer/index";
 
 import GerFornecedor from "../pages/admin/gerFornecedor/index";
 
-import AtualizarImpostos from "../pages/estoque/compras/updateTaxes";
-
 export default function Routes() {
   return (
     <>
@@ -99,8 +97,6 @@ export default function Routes() {
       <Route path={"/relatoriosEstoque"} component={RelatorioDosProdutos} />
 
       <Route path={"/invoices"} component={EmitNotaFiscal} />
-
-      <Route path={"/updatedTaxes"} component={AtualizarImpostos} />
 
       <Route path={"/gerenciarFuncionario"} component={GerenciarFuncionarios} />
       <Route path={"/vendasAnalise"} component={VendasEmAnalise} />

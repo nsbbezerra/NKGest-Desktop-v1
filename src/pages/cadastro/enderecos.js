@@ -173,7 +173,7 @@ function Enderecos() {
   }
 
   return (
-    <div style={{ padding: 10, height: "100%", overflowY: "auto" }}>
+    <>
       <Header>
         <p style={{ fontWeight: "bold", marginBottom: -0.01, fontSize: 18 }}>
           <Icon type="environment" style={{ fontSize: 20 }} /> CADASTRO DE
@@ -352,7 +352,7 @@ function Enderecos() {
           </label>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
