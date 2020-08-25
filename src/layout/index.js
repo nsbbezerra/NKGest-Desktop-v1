@@ -43,8 +43,8 @@ class Layouts extends Component {
       modalAuth: false,
       stringConnection: "",
       showWarning: false,
-      admin: false, //MUDAR PARA TRUE
-      caixa: false, //MUDAR PARA TRUE
+      admin: false, //MUDAR PARA false
+      caixa: false, //MUDAR PARA false
       sale: false, //MUDAR PARA TRUE
       loading: false,
       user: "",
@@ -118,7 +118,7 @@ class Layouts extends Component {
     await this.setState({ nameFunc: "" });
     await sessionStorage.removeItem("name");
     await sessionStorage.removeItem("id");
-    this.props.history.push("/");
+    await this.props.history.push("/");
     this.setState({ modalAuth: true });
   };
 
@@ -252,13 +252,21 @@ class Layouts extends Component {
                   alt="logo nkgest"
                   style={{ height: 25, marginLeft: -15, marginBottom: 5 }}
                 />
-                <Icon
-                  className="custom-trigger btn-blue"
-                  type={this.state.collapse ? "menu-unfold" : "menu-fold"}
-                  onClick={() =>
-                    this.setState({ collapse: !this.state.collapse })
+                <Tooltip
+                  title={
+                    this.state.collapse === true
+                      ? "Expandir Menu"
+                      : "Encolher Menu"
                   }
-                />
+                >
+                  <Icon
+                    className="custom-trigger btn-blue"
+                    type={this.state.collapse ? "menu-unfold" : "menu-fold"}
+                    onClick={() =>
+                      this.setState({ collapse: !this.state.collapse })
+                    }
+                  />
+                </Tooltip>
               </div>
             </div>
             <PageHeader
@@ -270,7 +278,7 @@ class Layouts extends Component {
                     <span
                       style={{ color: "#fff", fontWeight: 600, width: "250px" }}
                     >
-                      NATANAEL DOS SANTOS BEZERRA
+                      {this.state.nameFunc}
                     </span>
                   </div>
                   <Divider type="vertical" />
@@ -484,14 +492,16 @@ class Layouts extends Component {
                         <Icon type="file-text" /> Ordem de Serviço
                       </Link>
                     </Menu.Item>
+                  </Menu.ItemGroup>
+                  <Menu.ItemGroup title="Orçamentos Salvos">
                     <Menu.Item key="setting:22">
                       <Link to="/orcamentos">
-                        <Icon type="container" /> Orçamento de Vendas
+                        <Icon type="container" /> Vendas
                       </Link>
                     </Menu.Item>
                     <Menu.Item key="setting:23">
                       <Link to="/ordersWait">
-                        <Icon type="container" /> Orçamento de Ordens de Serviço
+                        <Icon type="container" /> Ordens de Serviço
                       </Link>
                     </Menu.Item>
                   </Menu.ItemGroup>
@@ -650,13 +660,22 @@ class Layouts extends Component {
                 style={{
                   margin: 0,
                   height: "100%",
-                  overflowY: "auto",
-                  overflowX: "hidden",
                   background: "#fff",
                   padding: 10,
+                  borderRadius: 4,
+                  overflow: "hidden",
                 }}
               >
-                <Routes />
+                <div
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    overflowY: "auto",
+                    overflowX: "hidden",
+                  }}
+                >
+                  <Routes />
+                </div>
               </Content>
             </Layout>
           </Layout>
