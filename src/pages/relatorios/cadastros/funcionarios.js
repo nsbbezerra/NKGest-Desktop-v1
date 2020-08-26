@@ -1,11 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { Icon, Table, Button, Card, Descriptions, Select, Modal } from 'antd';
-import api from '../../../config/axios';
+import React, { useState, useEffect } from "react";
+import {
+  Icon,
+  Table,
+  Button,
+  Card,
+  Descriptions,
+  Select,
+  Modal,
+  Divider,
+} from "antd";
+import api from "../../../config/axios";
 
 const { Option } = Select;
 
 export default function RelatorioFuncionarios() {
-
   const [loading, setLoading] = useState(false);
   const [modalSearch, setModalSearch] = useState(false);
   const [funcionarios, setFuncionarios] = useState([]);
@@ -24,7 +32,7 @@ export default function RelatorioFuncionarios() {
           <p>{message}</p>
         </div>
       ),
-      onOk() { },
+      onOk() {},
     });
   }
 
@@ -36,46 +44,57 @@ export default function RelatorioFuncionarios() {
           <p>{message}</p>
         </div>
       ),
-      onOk() { },
+      onOk() {},
     });
   }
 
   useEffect(() => {
     findDados();
-  }, [])
+  }, []);
 
   async function findDados() {
-    await api.get('/organization/find').then(response => {
-      setDados(response.data.empresa);
-    }).catch(error => {
-      erro('Erro', error.message);
-    });
+    await api
+      .get("/organization/find")
+      .then((response) => {
+        setDados(response.data.empresa);
+      })
+      .catch((error) => {
+        erro("Erro", error.message);
+      });
   }
 
   async function finder() {
     if (find === null) {
-      warning('Atenção', 'Selecione uma opção de busca');
+      warning("Atenção", "Selecione uma opção de busca");
       return false;
     }
     setLoading(true);
-    await api.post('/report/listFunc', {
-      find: find
-    }).then(response => {
-      setFuncionarios(response.data.funcs);
-      setTotalActive(response.data.totalActive);
-      setTotalBlock(response.data.totalBlock);
-      setTotalFuncs(response.data.totalFuncs);
-      setLoading(false);
-      setModalSearch(false);
-      setButtonPrint(false);
-    }).catch(error => {
-      erro('Erro', error.response.data.message);
-      setLoading(false);
-    });
+    await api
+      .post("/report/listFunc", {
+        find: find,
+      })
+      .then((response) => {
+        setFuncionarios(response.data.funcs);
+        setTotalActive(response.data.totalActive);
+        setTotalBlock(response.data.totalBlock);
+        setTotalFuncs(response.data.totalFuncs);
+        setLoading(false);
+        setModalSearch(false);
+        setButtonPrint(false);
+      })
+      .catch((error) => {
+        erro("Erro", error.response.data.message);
+        setLoading(false);
+      });
   }
 
   function printer() {
-    var mywindow = window.open('', 'Print', `height=${window.screen.height}, width=${window.screen.width}`, 'fullscreen=yes');
+    var mywindow = window.open(
+      "",
+      "Print",
+      `height=${window.screen.height}, width=${window.screen.width}`,
+      "fullscreen=yes"
+    );
     mywindow.document.write(`
         <!DOCTYPE html>
         <html>
@@ -393,13 +412,17 @@ export default function RelatorioFuncionarios() {
                 <section class="company-info">
         
                   <div class="logo">
-                    <img src="${dados.logo_url}" style="width: 100px; max-height: 100px;"/>
+                    <img src="${
+                      dados.logo_url
+                    }" style="width: 100px; max-height: 100px;"/>
                   </div>
         
                   <div class="company-info-container">
         
                     <h5>${dados.name}</h5>
-                    <p>${dados.street}, ${dados.number}, ${dados.bairro}, ${dados.city} - ${dados.state}, CEP: ${dados.cep}.</p>
+                    <p>${dados.street}, ${dados.number}, ${dados.bairro}, ${
+      dados.city
+    } - ${dados.state}, CEP: ${dados.cep}.</p>
                     <p>CNPJ: ${dados.cnpj}, Fone ${dados.phoneComercial}</p>
                     <p>Email: ${dados.email}</p>
                   </div>
@@ -421,15 +444,21 @@ export default function RelatorioFuncionarios() {
                   </tr>
                 </thead>
                 <tbody>
-                    ${funcionarios.map(cli => {
-      return `<tr>
+                    ${funcionarios
+                      .map((cli) => {
+                        return `<tr>
                         <td class="name2">${cli.name}</td>
                         <td class="socialName2">${cli.cargo}</td>
                         <td class="phone2">${cli.celOne}</td>
                         <td class="cel2">${cli.admission}</td>
-                        ${cli.active ? (`<td class="active2">Sim</td>`) : (`<td class="active2">Não</td>`)}
-                      </tr>`
-    }).join('')}
+                        ${
+                          cli.active
+                            ? `<td class="active2">Sim</td>`
+                            : `<td class="active2">Não</td>`
+                        }
+                      </tr>`;
+                      })
+                      .join("")}
                 </tbody>
               </table>
         
@@ -466,162 +495,251 @@ export default function RelatorioFuncionarios() {
 
   const columns = [
     {
-      title: 'Nome',
-      dataIndex: 'name',
-      key: 'name',
+      title: "Nome",
+      dataIndex: "name",
+      key: "name",
     },
     {
-      title: 'Cargo',
-      dataIndex: 'cargo',
-      key: 'cargo',
+      title: "Cargo",
+      dataIndex: "cargo",
+      key: "cargo",
     },
     {
-      title: 'Contato',
-      dataIndex: 'celOne',
-      key: 'celOne',
+      title: "Contato",
+      dataIndex: "celOne",
+      key: "celOne",
     },
     {
-      title: 'Vendas?',
-      dataIndex: 'sales',
-      key: 'sales',
-      render: (act) => <>
-        {act === true && (
-          <Icon type='check' style={{ color: '#4caf50', fontWeight: 'bold', fontSize: 17 }} />
-        )}
-        {act === false && (
-          <Icon type='stop' style={{ color: '#f44336', fontWeight: 'bold', fontSize: 17 }} />
-        )}
-      </>,
-      width: '7%',
-      align: 'center'
+      title: "Vendas?",
+      dataIndex: "sales",
+      key: "sales",
+      render: (act) => (
+        <>
+          {act === true && (
+            <Icon
+              type="check"
+              style={{ color: "#4caf50", fontWeight: "bold", fontSize: 17 }}
+            />
+          )}
+          {act === false && (
+            <Icon
+              type="stop"
+              style={{ color: "#f44336", fontWeight: "bold", fontSize: 17 }}
+            />
+          )}
+        </>
+      ),
+      width: "7%",
+      align: "center",
     },
     {
-      title: 'Comissionado?',
-      dataIndex: 'comissioned',
-      key: 'comissioned',
-      render: (act) => <>
-        {act === true && (
-          <Icon type='check' style={{ color: '#4caf50', fontWeight: 'bold', fontSize: 17 }} />
-        )}
-        {act === false && (
-          <Icon type='stop' style={{ color: '#f44336', fontWeight: 'bold', fontSize: 17 }} />
-        )}
-      </>,
-      width: '7%',
-      align: 'center'
+      title: "Comissionado?",
+      dataIndex: "comissioned",
+      key: "comissioned",
+      render: (act) => (
+        <>
+          {act === true && (
+            <Icon
+              type="check"
+              style={{ color: "#4caf50", fontWeight: "bold", fontSize: 17 }}
+            />
+          )}
+          {act === false && (
+            <Icon
+              type="stop"
+              style={{ color: "#f44336", fontWeight: "bold", fontSize: 17 }}
+            />
+          )}
+        </>
+      ),
+      width: "7%",
+      align: "center",
     },
     {
-      title: 'Caixa?',
-      dataIndex: 'caixa',
-      key: 'caixa',
-      render: (act) => <>
-        {act === true && (
-          <Icon type='check' style={{ color: '#4caf50', fontWeight: 'bold', fontSize: 17 }} />
-        )}
-        {act === false && (
-          <Icon type='stop' style={{ color: '#f44336', fontWeight: 'bold', fontSize: 17 }} />
-        )}
-      </>,
-      width: '7%',
-      align: 'center'
+      title: "Caixa?",
+      dataIndex: "caixa",
+      key: "caixa",
+      render: (act) => (
+        <>
+          {act === true && (
+            <Icon
+              type="check"
+              style={{ color: "#4caf50", fontWeight: "bold", fontSize: 17 }}
+            />
+          )}
+          {act === false && (
+            <Icon
+              type="stop"
+              style={{ color: "#f44336", fontWeight: "bold", fontSize: 17 }}
+            />
+          )}
+        </>
+      ),
+      width: "7%",
+      align: "center",
     },
     {
-      title: 'Admin?',
-      dataIndex: 'admin',
-      key: 'admin',
-      render: (act) => <>
-        {act === true && (
-          <Icon type='check' style={{ color: '#4caf50', fontWeight: 'bold', fontSize: 17 }} />
-        )}
-        {act === false && (
-          <Icon type='stop' style={{ color: '#f44336', fontWeight: 'bold', fontSize: 17 }} />
-        )}
-      </>,
-      width: '7%',
-      align: 'center'
+      title: "Admin?",
+      dataIndex: "admin",
+      key: "admin",
+      render: (act) => (
+        <>
+          {act === true && (
+            <Icon
+              type="check"
+              style={{ color: "#4caf50", fontWeight: "bold", fontSize: 17 }}
+            />
+          )}
+          {act === false && (
+            <Icon
+              type="stop"
+              style={{ color: "#f44336", fontWeight: "bold", fontSize: 17 }}
+            />
+          )}
+        </>
+      ),
+      width: "7%",
+      align: "center",
     },
     {
-      title: 'Ativo?',
-      dataIndex: 'active',
-      key: 'active',
-      render: (act) => <>
-        {act === true && (
-          <Icon type='check' style={{ color: '#4caf50', fontWeight: 'bold', fontSize: 17 }} />
-        )}
-        {act === false && (
-          <Icon type='stop' style={{ color: '#f44336', fontWeight: 'bold', fontSize: 17 }} />
-        )}
-      </>,
-      align: 'center',
-      width: '7%'
-    }
+      title: "Ativo?",
+      dataIndex: "active",
+      key: "active",
+      render: (act) => (
+        <>
+          {act === true && (
+            <Icon
+              type="check"
+              style={{ color: "#4caf50", fontWeight: "bold", fontSize: 17 }}
+            />
+          )}
+          {act === false && (
+            <Icon
+              type="stop"
+              style={{ color: "#f44336", fontWeight: "bold", fontSize: 17 }}
+            />
+          )}
+        </>
+      ),
+      align: "center",
+      width: "7%",
+    },
   ];
 
   return (
     <>
-
-      <div style={{ marginBottom: 10, width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-
-        <Card size='small'>
-
+      <div
+        style={{
+          marginBottom: 10,
+          width: "100%",
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Card size="small">
           {find === null && (
-            <p style={{ marginBottom: -3, marginTop: -1 }}>Tipo dos dados: <strong>-</strong></p>
+            <p style={{ marginBottom: -3, marginTop: -1 }}>
+              Tipo dos dados: <strong>-</strong>
+            </p>
           )}
           {find === 1 && (
-            <p style={{ marginBottom: -3, marginTop: -1 }}>Tipo dos dados: <strong>Funcionários Ativos</strong></p>
+            <p style={{ marginBottom: -3, marginTop: -1 }}>
+              Tipo dos dados: <strong>Funcionários Ativos</strong>
+            </p>
           )}
           {find === 2 && (
-            <p style={{ marginBottom: -3, marginTop: -1 }}>Tipo dos dados: <strong>Funcionários Bloqueados</strong></p>
+            <p style={{ marginBottom: -3, marginTop: -1 }}>
+              Tipo dos dados: <strong>Funcionários Bloqueados</strong>
+            </p>
           )}
           {find === 3 && (
-            <p style={{ marginBottom: -3, marginTop: -1 }}>Tipo dos dados: <strong>Todos os Funcionários</strong></p>
+            <p style={{ marginBottom: -3, marginTop: -1 }}>
+              Tipo dos dados: <strong>Todos os Funcionários</strong>
+            </p>
           )}
-
         </Card>
 
-        <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <div style={{ display: "flex", flexDirection: "row" }}>
+          <Button
+            icon="printer"
+            type="default"
+            style={{ marginRight: 10 }}
+            disabled={buttonPrint}
+            onClick={() => printer()}
+          >
+            Imprimir Relatório
+          </Button>
 
-          <Button icon='printer' type='default' style={{ marginRight: 10 }} disabled={buttonPrint} onClick={() => printer()}>Imprimir Relatório</Button>
-
-          <Button icon='search' type='primary' onClick={() => setModalSearch(true)}>Busca Avançada</Button>
-
+          <Button
+            icon="search"
+            type="primary"
+            onClick={() => setModalSearch(true)}
+          >
+            Busca Avançada
+          </Button>
         </div>
-
       </div>
 
-      <Table pagination={{ pageSize: 10 }} columns={columns} dataSource={funcionarios} size='small' style={{ marginTop: 15, marginBottom: 15 }} rowKey={(cli) => cli._id} />
+      <Table
+        pagination={{ pageSize: 10 }}
+        columns={columns}
+        dataSource={funcionarios}
+        size="small"
+        style={{ marginTop: 10 }}
+        rowKey={(cli) => cli._id}
+      />
 
-      {totalFuncs && (
-        <Descriptions layout="vertical" bordered size='small'>
-          <Descriptions.Item label="Funcionários Ativos" span={3}>{totalActive}</Descriptions.Item>
-          <Descriptions.Item label="Funcionários Bloqueados" span={3}>{totalBlock}</Descriptions.Item>
-          <Descriptions.Item label="Total de Funcionários" span={3}>{totalFuncs}</Descriptions.Item>
-        </Descriptions>
-      )}
+      <Divider />
+
+      <Descriptions layout="vertical" bordered size="small">
+        <Descriptions.Item label="Funcionários Ativos" span={1}>
+          {totalActive}
+        </Descriptions.Item>
+        <Descriptions.Item label="Funcionários Bloqueados" span={1}>
+          {totalBlock}
+        </Descriptions.Item>
+        <Descriptions.Item label="Total de Funcionários" span={1}>
+          {totalFuncs}
+        </Descriptions.Item>
+      </Descriptions>
 
       <Modal
         visible={modalSearch}
         onCancel={() => setModalSearch(false)}
         title="Buscar Relatório"
         footer={[
-          <Button key="back" icon='close' type='danger' onClick={() => setModalSearch(false)}>
+          <Button
+            key="back"
+            icon="close"
+            type="danger"
+            onClick={() => setModalSearch(false)}
+          >
             Cancelar
-                        </Button>,
-          <Button key="submit" icon='search' type="primary" loading={loading} onClick={() => finder()}>
+          </Button>,
+          <Button
+            key="submit"
+            icon="search"
+            type="primary"
+            loading={loading}
+            onClick={() => finder()}
+          >
             Buscar
-                    </Button>,
+          </Button>,
         ]}
       >
-
         <label>Selecione um tipo de busca:</label>
-        <Select value={find} style={{ width: '100%' }} onChange={(value) => setFind(value)}>
+        <Select
+          value={find}
+          style={{ width: "100%" }}
+          onChange={(value) => setFind(value)}
+        >
           <Option value={1}>Funcionários Ativos</Option>
           <Option value={2}>Funcionários Bloqueados</Option>
           <Option value={3}>Buscar Todos</Option>
         </Select>
-
       </Modal>
-
     </>
-  )
+  );
 }

@@ -1201,11 +1201,12 @@ export default function BalcaoVendas() {
             bodyStyle={{
               padding: 5,
               backgroundColor: "rgba(26,26,26,.05)",
-              borderRadius: 3,
+              borderRadius: 5,
             }}
             style={{
-              borderRadius: 3,
+              borderRadius: 5,
               boxShadow: "0px 0px 5px rgba(26,26,26,.1)",
+              overflow: "hidden",
             }}
           >
             <Row gutter={10}>

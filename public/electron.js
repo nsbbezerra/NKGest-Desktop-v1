@@ -5,8 +5,6 @@ const path = require("path");
 const isDev = require("electron-is-dev");
 let mainWindow;
 const Menu = electron.Menu;
-const PdfWindow = require("electron-pdf-window");
-let pdfWindow;
 
 Menu.setApplicationMenu(false);
 
@@ -38,8 +36,7 @@ function createWindow() {
     (event, url, frameName, disposition, options, aditionalFeatures) => {
       if (frameName === "PrintPdf") {
         event.preventDefault();
-        pdfWindow = new PdfWindow({ width: 1100, height: 650, icon: iconPath });
-        pdfWindow.loadURL(url);
+        electron.shell.openExternal(url);
       }
     }
   );

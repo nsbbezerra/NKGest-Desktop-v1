@@ -6,7 +6,6 @@ import {
   Table,
   Tooltip,
   Descriptions,
-  Card,
   Spin,
   Divider,
   Input,
@@ -137,6 +136,7 @@ export default class RelatorioVendas extends Component {
     await api
       .post(`/cashier/findMoviment/${idCaixa}`)
       .then((response) => {
+        this.setState({ drawer: false });
         this.setState({ caixa: response.data.findCaixa });
         this.setState({ moviments: response.data.findMoviments });
         this.setState({ loadingInfo: false });
@@ -328,6 +328,7 @@ export default class RelatorioVendas extends Component {
         this.setState({ sales: response.data.sales });
         this.setState({ services: response.data.services });
         this.setState({ spinner: false });
+        this.setState({ drawer: false });
       })
       .catch((error) => {
         this.erro("Erro", error.message);
@@ -603,6 +604,21 @@ export default class RelatorioVendas extends Component {
   replaceValue = (value) => {
     let casas = Math.pow(10, 2);
     return Math.floor(value * casas) / casas;
+  };
+
+  handleModalDeposit = () => {
+    this.setState({ drawer: false });
+    this.setState({ modalDeposit: true });
+  };
+
+  handleModalRetirar = () => {
+    this.setState({ drawer: false });
+    this.setState({ modalRetirar: true });
+  };
+
+  handleModalSendCloseCaixa = () => {
+    this.setState({ drawer: false });
+    this.setState({ modalSendCloseCaixa: true });
   };
 
   render() {
@@ -1901,7 +1917,7 @@ export default class RelatorioVendas extends Component {
               type="default"
               size="large"
               onClick={() => {
-                this.setState({ modalDeposit: true });
+                this.handleModalDeposit();
               }}
               style={{ marginBottom: 10 }}
             >
@@ -1914,7 +1930,7 @@ export default class RelatorioVendas extends Component {
               type="danger"
               size="large"
               onClick={() => {
-                this.setState({ modalRetirar: true });
+                this.handleModalRetirar();
               }}
             >
               Efeturar Retirada
@@ -1928,7 +1944,7 @@ export default class RelatorioVendas extends Component {
               type="primary"
               size="large"
               onClick={() => {
-                this.setState({ modalSendCloseCaixa: true });
+                this.handleModalSendCloseCaixa();
               }}
             >
               Fechar o Caixa

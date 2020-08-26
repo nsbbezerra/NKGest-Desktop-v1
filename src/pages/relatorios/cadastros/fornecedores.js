@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Icon, Table, Button, Modal, Descriptions, Spin } from 'antd';
-import api from '../../../config/axios';
+import React, { useState, useEffect } from "react";
+import { Icon, Table, Button, Modal, Descriptions, Spin, Divider } from "antd";
+import api from "../../../config/axios";
 
 export default function RelatorioFornecedores() {
-
   const [spinner, setSpinner] = useState(false);
   const [fornecedores, setFornecedores] = useState([]);
   const [fornecerCount, setFornecerCount] = useState(null);
@@ -18,29 +17,35 @@ export default function RelatorioFornecedores() {
           <p>{message}</p>
         </div>
       ),
-      onOk() { },
+      onOk() {},
     });
   }
 
   async function findDados() {
-    await api.get('/organization/find').then(response => {
-      setDados(response.data.empresa);
-    }).catch(error => {
-      erro('Erro', error.message);
-    });
+    await api
+      .get("/organization/find")
+      .then((response) => {
+        setDados(response.data.empresa);
+      })
+      .catch((error) => {
+        erro("Erro", error.message);
+      });
   }
 
   async function finder() {
     setSpinner(true);
-    await api.get('/report/listFornecers').then(response => {
-      setFornecerCount(response.data.fornecersCount);
-      setFornecedores(response.data.fornecers);
-      setSpinner(false);
-      setButtonPrint(false);
-    }).catch(error => {
-      erro('Erro', error.message);
-      setSpinner(false);
-    });
+    await api
+      .get("/report/listFornecers")
+      .then((response) => {
+        setFornecerCount(response.data.fornecersCount);
+        setFornecedores(response.data.fornecers);
+        setSpinner(false);
+        setButtonPrint(false);
+      })
+      .catch((error) => {
+        erro("Erro", error.message);
+        setSpinner(false);
+      });
   }
 
   useEffect(() => {
@@ -49,7 +54,12 @@ export default function RelatorioFornecedores() {
   }, []);
 
   function printer() {
-    var mywindow = window.open('', 'Print', `height=${window.screen.height}, width=${window.screen.width}`, 'fullscreen=yes');
+    var mywindow = window.open(
+      "",
+      "Print",
+      `height=${window.screen.height}, width=${window.screen.width}`,
+      "fullscreen=yes"
+    );
     mywindow.document.write(`
         <!DOCTYPE html>
         <html>
@@ -366,13 +376,17 @@ export default function RelatorioFornecedores() {
                 <section class="company-info">
         
                   <div class="logo">
-                    <img src="${dados.logo_url}" style="width: 100px; max-height: 100px;"/>
+                    <img src="${
+                      dados.logo_url
+                    }" style="width: 100px; max-height: 100px;"/>
                   </div>
         
                   <div class="company-info-container">
         
                     <h5>${dados.name}</h5>
-                    <p>${dados.street}, ${dados.number}, ${dados.bairro}, ${dados.city} - ${dados.state}, CEP: ${dados.cep}.</p>
+                    <p>${dados.street}, ${dados.number}, ${dados.bairro}, ${
+      dados.city
+    } - ${dados.state}, CEP: ${dados.cep}.</p>
                     <p>CNPJ: ${dados.cnpj}, Fone ${dados.phoneComercial}</p>
                     <p>Email: ${dados.email}</p>
                   </div>
@@ -394,15 +408,19 @@ export default function RelatorioFornecedores() {
                   </tr>
                 </thead>
                 <tbody>
-                    ${fornecedores.map(forn => {
-      return `<tr>
+                    ${fornecedores.map((forn) => {
+                      return `<tr>
                         <td class="name2">${forn.name}</td>
                         <td class="socialName2">${forn.socialName}</td>
                         <td class="phone2">${forn.phoneComercial}</td>
                         <td class="email2">${forn.email}</td>
-                        ${forn.active ? (`<td class="active2">Sim</td>`) : (`<td class="active2">Não</td>`)}
-                      </tr>`
-    })}
+                        ${
+                          forn.active
+                            ? `<td class="active2">Sim</td>`
+                            : `<td class="active2">Não</td>`
+                        }
+                      </tr>`;
+                    })}
                 </tbody>
               </table>
         
@@ -427,77 +445,111 @@ export default function RelatorioFornecedores() {
         
         </html>
         `);
-
   }
 
   const columns = [
     {
-      title: 'Tipo',
-      dataIndex: 'typeClient',
-      key: 'typeClient',
-      render: (tipo) => <>
-        {tipo === 'fisic' && (
-          <Button type='link' size='small'>Física</Button>
-        )}
-        {tipo === 'juridic' && (
-          <Button type='link' size='small'>Jurídica</Button>
-        )}
-      </>,
-      width: '8%'
+      title: "Tipo",
+      dataIndex: "typeClient",
+      key: "typeClient",
+      render: (tipo) => (
+        <>
+          {tipo === "fisic" && (
+            <Button type="link" size="small">
+              Física
+            </Button>
+          )}
+          {tipo === "juridic" && (
+            <Button type="link" size="small">
+              Jurídica
+            </Button>
+          )}
+        </>
+      ),
+      width: "8%",
     },
     {
-      title: 'Nome',
-      dataIndex: 'name',
-      key: 'name',
+      title: "Nome",
+      dataIndex: "name",
+      key: "name",
     },
     {
-      title: 'CPF / CNPJ',
-      dataIndex: 'cpf_cnpj',
-      key: 'cpf_cnpj',
+      title: "CPF / CNPJ",
+      dataIndex: "cpf_cnpj",
+      key: "cpf_cnpj",
     },
     {
-      title: 'Razão Social',
-      dataIndex: 'socialName',
-      key: 'socialName',
+      title: "Razão Social",
+      dataIndex: "socialName",
+      key: "socialName",
     },
     {
-      title: 'Contato',
-      dataIndex: 'phoneComercial',
-      key: 'phoneComercial',
+      title: "Contato",
+      dataIndex: "phoneComercial",
+      key: "phoneComercial",
     },
     {
-      title: 'Ativo?',
-      dataIndex: 'active',
-      key: 'active',
-      render: (act) => <>
-        {act === true && (
-          <Icon type='check' style={{ color: '#4caf50', fontWeight: 'bold', fontSize: 17 }} />
-        )}
-        {act === false && (
-          <Icon type='stop' style={{ color: '#f44336', fontWeight: 'bold', fontSize: 17 }} />
-        )}
-      </>,
-      align: 'center',
-      width: '8%'
+      title: "Ativo?",
+      dataIndex: "active",
+      key: "active",
+      render: (act) => (
+        <>
+          {act === true && (
+            <Icon
+              type="check"
+              style={{ color: "#4caf50", fontWeight: "bold", fontSize: 17 }}
+            />
+          )}
+          {act === false && (
+            <Icon
+              type="stop"
+              style={{ color: "#f44336", fontWeight: "bold", fontSize: 17 }}
+            />
+          )}
+        </>
+      ),
+      align: "center",
+      width: "8%",
     },
   ];
 
   return (
-    <Spin spinning={spinner} size='large'>
-
-      <div style={{ marginBottom: 10, width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
-
-        <Button icon='printer' type='default' style={{ marginRight: 10 }} disabled={buttonPrint} onClick={() => printer()}>Imprimir Relatório</Button>
-
+    <Spin spinning={spinner} size="large">
+      <div
+        style={{
+          marginBottom: 10,
+          width: "100%",
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "flex-start",
+          alignItems: "center",
+        }}
+      >
+        <Button
+          icon="printer"
+          type="default"
+          style={{ marginRight: 10 }}
+          disabled={buttonPrint}
+          onClick={() => printer()}
+        >
+          Imprimir Relatório
+        </Button>
       </div>
 
-      <Table pagination={{ pageSize: 10 }} columns={columns} dataSource={fornecedores} size='small' style={{ marginTop: 15, marginBottom: 15 }} rowKey={(cli) => cli._id} />
-
-      {fornecerCount && (
-        <Descriptions layout="vertical" bordered size='small'>
-          <Descriptions.Item label="Total de Fornecedores" span={3}>{fornecerCount}</Descriptions.Item>
-        </Descriptions>
-      )}
+      <Table
+        pagination={{ pageSize: 10 }}
+        columns={columns}
+        dataSource={fornecedores}
+        size="small"
+        style={{ marginTop: 10 }}
+        rowKey={(cli) => cli._id}
+      />
+      <Divider />
+      <Descriptions layout="vertical" bordered size="small">
+        <Descriptions.Item label="Total de Fornecedores" span={3}>
+          {fornecerCount}
+        </Descriptions.Item>
+      </Descriptions>
     </Spin>
-  )
+  );
 }

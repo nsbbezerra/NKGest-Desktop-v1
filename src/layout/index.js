@@ -237,100 +237,113 @@ class Layouts extends Component {
             border: "2px solid #001529",
           }}
         >
-          <Header
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
+          <div
+            style={{ boxShadow: "0px 0px 7px rgba(0,0,0,.5)", zIndex: 1000 }}
           >
-            <div className="cabecalho-app">
-              <Avatar src={sgomIcon} size="large" />
-              <div>
-                <img
-                  src={logoNkgest}
-                  alt="logo nkgest"
-                  style={{ height: 25, marginLeft: -15, marginBottom: 5 }}
-                />
-                <Tooltip
-                  title={
-                    this.state.collapse === true
-                      ? "Expandir Menu"
-                      : "Encolher Menu"
-                  }
-                >
-                  <Icon
-                    className="custom-trigger btn-blue"
-                    type={this.state.collapse ? "menu-unfold" : "menu-fold"}
-                    onClick={() =>
-                      this.setState({ collapse: !this.state.collapse })
-                    }
+            <Header
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <div className="cabecalho-app">
+                <Avatar src={sgomIcon} size="large" />
+                <div>
+                  <img
+                    src={logoNkgest}
+                    alt="logo nkgest"
+                    style={{ height: 25, marginLeft: -15, marginBottom: 5 }}
                   />
-                </Tooltip>
-              </div>
-            </div>
-            <PageHeader
-              style={{ width: "70%" }}
-              extra={[
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <Avatar size="default" icon="user" />
-                    <span
-                      style={{ color: "#fff", fontWeight: 600, width: "250px" }}
-                    >
-                      {this.state.nameFunc}
-                    </span>
-                  </div>
-                  <Divider type="vertical" />
-                  <AutoComplete style={{ width: 200 }}>
-                    <Input
-                      prefix={
-                        <Icon type="search" placeholder="Buscar na Aplicação" />
+                  <Tooltip
+                    title={
+                      this.state.collapse === true
+                        ? "Expandir Menu"
+                        : "Encolher Menu"
+                    }
+                  >
+                    <Icon
+                      className="custom-trigger btn-blue"
+                      type={this.state.collapse ? "menu-unfold" : "menu-fold"}
+                      onClick={() =>
+                        this.setState({ collapse: !this.state.collapse })
                       }
                     />
-                  </AutoComplete>
-                  <Divider type="vertical" />
-                  <Dropdown overlay={menu} placement="bottomCenter">
-                    <Button icon="tool" type="primary" />
-                  </Dropdown>
-                </div>,
-              ]}
-            />
-            <div className="btn-app-container">
-              <Tooltip title="Minimizar">
-                <button
-                  className="btn-header btn-blue"
-                  onClick={() => this.handleMinimize()}
+                  </Tooltip>
+                </div>
+              </div>
+              <PageHeader
+                style={{ width: "70%" }}
+                extra={[
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <Avatar size="default" icon="user" />
+                      <span
+                        style={{
+                          color: "#fff",
+                          fontWeight: 600,
+                          width: "250px",
+                        }}
+                      >
+                        {this.state.nameFunc}
+                      </span>
+                    </div>
+                    <Divider type="vertical" />
+                    <AutoComplete style={{ width: 200 }}>
+                      <Input
+                        prefix={
+                          <Icon
+                            type="search"
+                            placeholder="Buscar na Aplicação"
+                          />
+                        }
+                      />
+                    </AutoComplete>
+                    <Divider type="vertical" />
+                    <Dropdown overlay={menu} placement="bottomCenter">
+                      <Button icon="tool" type="primary" />
+                    </Dropdown>
+                  </div>,
+                ]}
+              />
+              <div className="btn-app-container">
+                <Tooltip title="Minimizar">
+                  <button
+                    className="btn-header btn-blue"
+                    onClick={() => this.handleMinimize()}
+                  >
+                    <Icon type="minus" />
+                  </button>
+                </Tooltip>
+                <Tooltip
+                  title={
+                    this.state.maximized === true
+                      ? "Redimensionar"
+                      : "Maximizar"
+                  }
                 >
-                  <Icon type="minus" />
-                </button>
-              </Tooltip>
-              <Tooltip
-                title={
-                  this.state.maximized === true ? "Redimensionar" : "Maximizar"
-                }
-              >
-                <button
-                  className="btn-header btn-blue"
-                  onClick={() => this.handleMaximize()}
-                >
-                  {this.state.maximized === true ? (
-                    <Icon type="shrink" />
-                  ) : (
-                    <Icon type="arrows-alt" />
-                  )}
-                </button>
-              </Tooltip>
-              <Tooltip title="Fechar">
-                <button
-                  className="btn-header btn-red"
-                  onClick={() => this.handleClose()}
-                >
-                  <Icon type="close" />
-                </button>
-              </Tooltip>
-            </div>
-          </Header>
+                  <button
+                    className="btn-header btn-blue"
+                    onClick={() => this.handleMaximize()}
+                  >
+                    {this.state.maximized === true ? (
+                      <Icon type="shrink" />
+                    ) : (
+                      <Icon type="arrows-alt" />
+                    )}
+                  </button>
+                </Tooltip>
+                <Tooltip title="Fechar">
+                  <button
+                    className="btn-header btn-red"
+                    onClick={() => this.handleClose()}
+                  >
+                    <Icon type="close" />
+                  </button>
+                </Tooltip>
+              </div>
+            </Header>
+          </div>
 
           <Layout style={{ height: "100%", overflowY: "auto" }}>
             <Sider
@@ -344,7 +357,8 @@ class Layouts extends Component {
                 height: "100%",
                 maxHeight: "100%",
                 overflowX: "hidden",
-                borderRight: "1px solid #001529",
+                boxShadow: "0px 0px 7px rgba(0,0,0,.3)",
+                zIndex: 1000,
               }}
               theme="light"
             >
@@ -661,7 +675,7 @@ class Layouts extends Component {
                   margin: 0,
                   height: "100%",
                   background: "#fff",
-                  padding: 10,
+                  padding: 5,
                   borderRadius: 4,
                   overflow: "hidden",
                 }}
@@ -672,6 +686,7 @@ class Layouts extends Component {
                     height: "100%",
                     overflowY: "auto",
                     overflowX: "hidden",
+                    padding: 5,
                   }}
                 >
                   <Routes />
