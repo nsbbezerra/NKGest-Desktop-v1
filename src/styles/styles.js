@@ -34,8 +34,13 @@ export const Header = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  border-bottom: 1px solid lightgray;
+  border-radius: 5px;
   margin-bottom: 10px;
+  background: #ddd;
+  position: sticky;
+  top: -5px;
+  z-index: 100;
+  padding: 5px;
 `;
 
 export const DividerStyle = styled.div`

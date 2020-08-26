@@ -238,7 +238,7 @@ class Layouts extends Component {
           }}
         >
           <div
-            style={{ boxShadow: "0px 0px 7px rgba(0,0,0,.5)", zIndex: 1000 }}
+            style={{ boxShadow: "0px 0px 7px rgba(0,0,0,.6)", zIndex: 1000 }}
           >
             <Header
               style={{
