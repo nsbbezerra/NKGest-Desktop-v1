@@ -1,34 +1,43 @@
-import React, { useState, useEffect } from 'react';
-import './style.css';
-import { Radio, Button, Divider } from 'antd';
-import Matri from '../assets/print.svg';
-import Norm from '../assets/printer.svg';
+import React, { useState, useEffect } from "react";
+import "./style.css";
+import { Radio, Button, Divider } from "antd";
+import Matri from "../assets/print.svg";
+import Norm from "../assets/printer.svg";
 
 function PrintSaleTemplate({ empresa, venda, cliente, endereco }) {
+  const [modePrint, setModePrint] = useState("");
 
-    const [modePrint, setModePrint] = useState('');
-
-    async function findPrintMode() {
-        const printMode = await localStorage.getItem('print');
-        if (printMode) {
-            await setModePrint(printMode);
-        } else {
-            return;
-        }
+  async function findPrintMode() {
+    const printMode = await localStorage.getItem("print");
+    if (printMode) {
+      await setModePrint(printMode);
+    } else {
+      return;
     }
+  }
 
-    useEffect(() => {
-        findPrintMode();
-    }, [])
+  useEffect(() => {
+    findPrintMode();
+  }, []);
 
-    function replaceValue(value) {
-        let casas = Math.pow(10, 2);
-        return Math.floor(value * casas) / casas;
-    }
+  function replaceValue(value) {
+    let casas = Math.pow(10, 2);
+    let replaced = Math.floor(value * casas) / casas;
 
-    function printingNormal() {
-        var myWindow = window.open('', 'Print', `height=${window.screen.height}, width=${window.screen.width}`, 'fullscreen=yes');
-        myWindow.document.write(`
+    return replaced.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
+  }
+
+  function printingNormal() {
+    var myWindow = window.open(
+      "",
+      "Print",
+      `height=${window.screen.height}, width=${window.screen.width}`,
+      "fullscreen=yes"
+    );
+    myWindow.document.write(`
         <!DOCTYPE html>
             <html lang="pt-br">
 
@@ -97,18 +106,30 @@ function PrintSaleTemplate({ empresa, venda, cliente, endereco }) {
 
                 <div class="cabecalho-print">
                     <div class="logo-container">
-                    <img alt="logo" class="logo-print" src="${empresa.logo_url}" />
+                    <img alt="logo" class="logo-print" src="${
+                      empresa.logo_url
+                    }" />
                     </div>
                     <div class="info-container">
                     <div class="info-company">
                         <h1>${empresa.name}</h1>
-                        <p><strong>END:</strong> ${empresa.street}, ${empresa.number}, ${empresa.bairro}, <strong>CEP:</strong> ${empresa.cep}, ${empresa.city} - ${empresa.state}
+                        <p><strong>END:</strong> ${empresa.street}, ${
+      empresa.number
+    }, ${empresa.bairro}, <strong>CEP:</strong> ${empresa.cep}, ${
+      empresa.city
+    } - ${empresa.state}
                         </p>
-                        <p><strong>TEL:</strong> ${empresa.phoneComercial} - <strong>EMAIL:</strong> ${empresa.email}</p>
+                        <p><strong>TEL:</strong> ${
+                          empresa.phoneComercial
+                        } - <strong>EMAIL:</strong> ${empresa.email}</p>
                     </div>
                     <div class="info-order">
-                        <p><strong>NÚMERO DO PEDIDO:</strong> ${venda.number}</p>
-                        <p><strong>DATA DA COMPRA:</strong> ${venda.createDate}</p>
+                        <p><strong>NÚMERO DO PEDIDO:</strong> ${
+                          venda.number
+                        }</p>
+                        <p><strong>DATA DA COMPRA:</strong> ${
+                          venda.createDate
+                        }</p>
                     </div>
                     </div>
                 </div>
@@ -116,11 +137,21 @@ function PrintSaleTemplate({ empresa, venda, cliente, endereco }) {
                 <div class="client-container">
                     <div class="client-info">
                     <p><strong>CLIENTE:</strong> ${cliente.name}</p>
-                    <p><strong>END:</strong> ${endereco.street}, ${endereco.number}, ${endereco.bairro}, ${endereco.city} - ${endereco.state}</p>
+                    <p><strong>END:</strong> ${endereco.street}, ${
+      endereco.number
+    }, ${endereco.bairro}, ${endereco.city} - ${endereco.state}</p>
                     </div>
                     <div class="client-contact">
-                    ${cliente.phoneComercial ? (`<p><strong>CEL:</strong> ${cliente.phoneComercial}</p>`) : ''}
-                    ${cliente.celOne ? (`<p><strong>TEL:</strong> ${cliente.celOne}</p>`) : ''}
+                    ${
+                      cliente.phoneComercial
+                        ? `<p><strong>CEL:</strong> ${cliente.phoneComercial}</p>`
+                        : ""
+                    }
+                    ${
+                      cliente.celOne
+                        ? `<p><strong>TEL:</strong> ${cliente.celOne}</p>`
+                        : ""
+                    }
                     </div>
                 </div>
 
@@ -140,17 +171,23 @@ function PrintSaleTemplate({ empresa, venda, cliente, endereco }) {
                     </thead>
 
                     <tbody>
-                    ${venda.products.map(prod => {
-            return `
+                    ${venda.products
+                      .map((prod) => {
+                        return `
                         <tr>
                             <td class="qtd">${prod.quantity}</td>
                             <td class="desc">${prod.name}</td>
                             <td class="unid">${prod.unidade}</td>
-                            <td class="v-unit">${replaceValue(prod.valueUnit)}</td>
-                            <td class="v-total">${replaceValue(prod.valueTotal)}</td>
+                            <td class="v-unit">${replaceValue(
+                              prod.valueUnit
+                            )}</td>
+                            <td class="v-total">${replaceValue(
+                              prod.valueTotal
+                            )}</td>
                         </tr>
-                        `
-        }).join('')}
+                        `;
+                      })
+                      .join("")}
                     </tbody>
                 </table>
 
@@ -162,7 +199,7 @@ function PrintSaleTemplate({ empresa, venda, cliente, endereco }) {
 
                     <div class="obs-container">
                     <h5>OBSERVAÇÕES:</h5>
-                    ${venda.obs ? (`<p>${venda.obs}</p>`) : ''}
+                    ${venda.obs ? `<p>${venda.obs}</p>` : ""}
                     </div>
 
                     <div class="values-container">
@@ -185,7 +222,7 @@ function PrintSaleTemplate({ empresa, venda, cliente, endereco }) {
                         <p>%</p>
                         </div>
                         <div class="value-print">
-                        <p>${replaceValue(venda.desconto)}</p>
+                        <p>${parseFloat(venda.desconto.toFixed(2))}</p>
                         </div>
                     </div>
                     <div class="info-resume">
@@ -196,7 +233,9 @@ function PrintSaleTemplate({ empresa, venda, cliente, endereco }) {
                         <p class="text-bold">R$</p>
                         </div>
                         <div class="value-print">
-                        <p class="text-bold">${replaceValue(venda.valueLiquido)}</p>
+                        <p class="text-bold">${replaceValue(
+                          venda.valueLiquido
+                        )}</p>
                         </div>
                     </div>
                     </div>
@@ -215,14 +254,19 @@ function PrintSaleTemplate({ empresa, venda, cliente, endereco }) {
             </body>
             </html>
         `);
-        setTimeout(function () {
-            myWindow.print();
-        }, 2000);
-    }
+    setTimeout(function () {
+      myWindow.print();
+    }, 2000);
+  }
 
-    function printingSimplify() {
-        var myWindow = window.open('', 'Print', `height=${window.screen.height}, width=${window.screen.width}`, 'fullscreen=yes');
-        myWindow.document.write(`
+  function printingSimplify() {
+    var myWindow = window.open(
+      "",
+      "Print",
+      `height=${window.screen.height}, width=${window.screen.width}`,
+      "fullscreen=yes"
+    );
+    myWindow.document.write(`
         <!DOCTYPE html>
             <html lang="pt-br">
 
@@ -293,13 +337,23 @@ function PrintSaleTemplate({ empresa, venda, cliente, endereco }) {
                     <div class="info-container">
                     <div class="info-company">
                         <h1>${empresa.name}</h1>
-                        <p><strong>END:</strong> ${empresa.street}, ${empresa.number}, ${empresa.bairro}, <strong>CEP:</strong> ${empresa.cep}, ${empresa.city} - ${empresa.state}
+                        <p><strong>END:</strong> ${empresa.street}, ${
+      empresa.number
+    }, ${empresa.bairro}, <strong>CEP:</strong> ${empresa.cep}, ${
+      empresa.city
+    } - ${empresa.state}
                         </p>
-                        <p><strong>TEL:</strong> ${empresa.phoneComercial} - <strong>EMAIL:</strong> ${empresa.email}</p>
+                        <p><strong>TEL:</strong> ${
+                          empresa.phoneComercial
+                        } - <strong>EMAIL:</strong> ${empresa.email}</p>
                     </div>
                     <div class="info-order">
-                        <p><strong>NÚMERO DO PEDIDO:</strong> ${venda.number}</p>
-                        <p><strong>DATA DA COMPRA:</strong> ${venda.createDate}</p>
+                        <p><strong>NÚMERO DO PEDIDO:</strong> ${
+                          venda.number
+                        }</p>
+                        <p><strong>DATA DA COMPRA:</strong> ${
+                          venda.createDate
+                        }</p>
                     </div>
                     </div>
                 </div>
@@ -307,11 +361,21 @@ function PrintSaleTemplate({ empresa, venda, cliente, endereco }) {
                 <div class="client-container">
                     <div class="client-info">
                     <p><strong>CLIENTE:</strong> ${cliente.name}</p>
-                    <p><strong>END:</strong> ${endereco.street}, ${endereco.number}, ${endereco.bairro}, ${endereco.city} - ${endereco.state}</p>
+                    <p><strong>END:</strong> ${endereco.street}, ${
+      endereco.number
+    }, ${endereco.bairro}, ${endereco.city} - ${endereco.state}</p>
                     </div>
                     <div class="client-contact">
-                    ${cliente.phoneComercial ? (`<p><strong>CEL:</strong> ${cliente.phoneComercial}</p>`) : ''}
-                    ${cliente.celOne ? (`<p><strong>TEL:</strong> ${cliente.celOne}</p>`) : ''}
+                    ${
+                      cliente.phoneComercial
+                        ? `<p><strong>CEL:</strong> ${cliente.phoneComercial}</p>`
+                        : ""
+                    }
+                    ${
+                      cliente.celOne
+                        ? `<p><strong>TEL:</strong> ${cliente.celOne}</p>`
+                        : ""
+                    }
                     </div>
                 </div>
 
@@ -331,17 +395,23 @@ function PrintSaleTemplate({ empresa, venda, cliente, endereco }) {
                     </thead>
 
                     <tbody>
-                    ${venda.products.map(prod => {
-            return `
+                    ${venda.products
+                      .map((prod) => {
+                        return `
                         <tr>
                             <td class="qtd">${prod.quantity}</td>
                             <td class="desc">${prod.name}</td>
                             <td class="unid">${prod.unidade}</td>
-                            <td class="v-unit">${replaceValue(prod.valueUnit)}</td>
-                            <td class="v-total">${replaceValue(prod.valueTotal)}</td>
+                            <td class="v-unit">${replaceValue(
+                              prod.valueUnit
+                            )}</td>
+                            <td class="v-total">${replaceValue(
+                              prod.valueTotal
+                            )}</td>
                         </tr>
-                        `
-        }).join('')}
+                        `;
+                      })
+                      .join("")}
                     </tbody>
                 </table>
 
@@ -353,7 +423,7 @@ function PrintSaleTemplate({ empresa, venda, cliente, endereco }) {
 
                     <div class="obs-container">
                     <h5>OBSERVAÇÕES:</h5>
-                    ${venda.obs ? (`<p>${venda.obs}</p>`) : ''}
+                    ${venda.obs ? `<p>${venda.obs}</p>` : ""}
                     </div>
 
                     <div class="values-container">
@@ -376,7 +446,7 @@ function PrintSaleTemplate({ empresa, venda, cliente, endereco }) {
                         <p>%</p>
                         </div>
                         <div class="value-print">
-                        <p>${replaceValue(venda.desconto)}</p>
+                        <p>${parseFloat(venda.desconto.toFixed(2))}</p>
                         </div>
                     </div>
                     <div class="info-resume">
@@ -387,7 +457,9 @@ function PrintSaleTemplate({ empresa, venda, cliente, endereco }) {
                         <p class="text-bold">R$</p>
                         </div>
                         <div class="value-print">
-                        <p class="text-bold">${replaceValue(venda.valueLiquido)}</p>
+                        <p class="text-bold">${replaceValue(
+                          venda.valueLiquido
+                        )}</p>
                         </div>
                     </div>
                     </div>
@@ -406,41 +478,79 @@ function PrintSaleTemplate({ empresa, venda, cliente, endereco }) {
             </body>
             </html>
         `);
-        myWindow.print();
-    }
+    myWindow.print();
+  }
 
-    function handlePrint() {
-        if (modePrint === 'normal') {
-            printingNormal()
-        } else {
-            printingSimplify()
-        }
+  function handlePrint() {
+    if (modePrint === "normal") {
+      printingNormal();
+    } else {
+      printingSimplify();
     }
+  }
 
-    return (
-        <div>
-            <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 14 }}>
-                <Radio.Group onChange={(e) => setModePrint(e.target.value)} value={modePrint}>
-                    <Radio.Button value='matricial' style={{ height: 100 }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginTop: 5 }}>
-                            <img src={Matri} style={{ width: 70, height: 70 }} />
-                            Matricial
-                                    </div>
-                    </Radio.Button>
-                    <Radio.Button value='normal' style={{ height: 100 }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginTop: 5 }}>
-                            <img src={Norm} style={{ width: 70, height: 70 }} />
-                            Normal
-                                    </div>
-                    </Radio.Button>
-                </Radio.Group>
+  return (
+    <div>
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          marginBottom: 14,
+        }}
+      >
+        <Radio.Group
+          onChange={(e) => setModePrint(e.target.value)}
+          value={modePrint}
+        >
+          <Radio.Button value="matricial" style={{ height: 100 }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: 5,
+              }}
+            >
+              <img src={Matri} style={{ width: 70, height: 70 }} />
+              Matricial
             </div>
-            <Divider />
-            <div style={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', marginTop: -3 }}>
-                <Button type='primary' icon='printer' onClick={() => handlePrint()}>Imprimir</Button>
+          </Radio.Button>
+          <Radio.Button value="normal" style={{ height: 100 }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: 5,
+              }}
+            >
+              <img src={Norm} style={{ width: 70, height: 70 }} />
+              Normal
             </div>
-        </div>
-    )
-};
+          </Radio.Button>
+        </Radio.Group>
+      </div>
+      <Divider />
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "flex-end",
+          alignItems: "center",
+          marginTop: -3,
+        }}
+      >
+        <Button type="primary" icon="printer" onClick={() => handlePrint()}>
+          Imprimir
+        </Button>
+      </div>
+    </div>
+  );
+}
 
 export default PrintSaleTemplate;

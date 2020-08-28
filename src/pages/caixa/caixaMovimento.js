@@ -681,7 +681,7 @@ export default class RelatorioVendas extends Component {
             <Tooltip placement="top" title="Pagamentos">
               <Button
                 shape="circle"
-                icon="barcode"
+                icon="dollar"
                 type="default"
                 size="small"
                 style={{ marginRight: 5 }}
@@ -778,7 +778,7 @@ export default class RelatorioVendas extends Component {
             <Tooltip placement="top" title="Pagamentos">
               <Button
                 shape="circle"
-                icon="barcode"
+                icon="dollar"
                 type="default"
                 size="small"
                 style={{ marginRight: 5 }}
@@ -1054,7 +1054,9 @@ export default class RelatorioVendas extends Component {
       {
         key: "1",
         info: "TOTAL BRUTO",
-        value: `R$ ${this.replaceValue(this.state.totalBruto)}`,
+        value: `${this.replaceValue(
+          this.state.totalBruto
+        ).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}`,
       },
       {
         key: "2",
@@ -1064,7 +1066,9 @@ export default class RelatorioVendas extends Component {
       {
         key: "3",
         info: "TOTAL A PAGAR",
-        value: `R$ ${this.replaceValue(this.state.totalLiquido)}`,
+        value: `${this.replaceValue(
+          this.state.totalLiquido
+        ).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}`,
       },
     ];
 
@@ -1087,7 +1091,9 @@ export default class RelatorioVendas extends Component {
       {
         key: "1",
         info: "TOTAL BRUTO",
-        value: `R$ ${this.replaceValue(this.state.totalBruto)}`,
+        value: `${this.replaceValue(
+          this.state.totalBruto
+        ).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}`,
       },
       {
         key: "2",
@@ -1097,7 +1103,9 @@ export default class RelatorioVendas extends Component {
       {
         key: "3",
         info: "TOTAL A PAGAR",
-        value: `R$ ${this.replaceValue(this.state.totalLiquido)}`,
+        value: `${this.replaceValue(
+          this.state.totalLiquido
+        ).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}`,
       },
     ];
 
@@ -1234,6 +1242,17 @@ export default class RelatorioVendas extends Component {
               key="1"
             >
               <Button
+                disabled={this.state.disabledButton}
+                icon="redo"
+                type="default"
+                size="large"
+                onClick={() => this.finders()}
+                style={{ position: "absolute", right: 55, top: 0 }}
+              >
+                Atualizar Vendas
+              </Button>
+
+              <Button
                 size="large"
                 icon="menu-fold"
                 type="primary"
@@ -1257,6 +1276,16 @@ export default class RelatorioVendas extends Component {
               }
               key="2"
             >
+              <Button
+                disabled={this.state.disabledButton}
+                icon="redo"
+                type="default"
+                size="large"
+                onClick={() => this.finders()}
+                style={{ position: "absolute", right: 55, top: 0 }}
+              >
+                Atualizar Vendas
+              </Button>
               <Button
                 size="large"
                 icon="menu-fold"
@@ -1884,18 +1913,6 @@ export default class RelatorioVendas extends Component {
               justifyContent: "space-around",
             }}
           >
-            <Button
-              disabled={this.state.disabledButton}
-              icon="redo"
-              type="dashed"
-              size="large"
-              onClick={() => this.finders()}
-            >
-              Atualizar Vendas
-            </Button>
-
-            <Divider />
-
             <Button
               disabled={this.state.disabledButton}
               icon="info-circle"

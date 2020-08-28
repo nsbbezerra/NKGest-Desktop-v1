@@ -23,6 +23,7 @@
     "axios": "^0.19.0",
     "cep-promise": "^3.0.7",
     "electron-is-dev": "^1.1.0",
+    "electron-pdf-window": "^1.0.12",
     "electron-publisher-s3": "^20.17.2",
     "lodash": "^4.17.11",
     "moment": "^2.24.0",
