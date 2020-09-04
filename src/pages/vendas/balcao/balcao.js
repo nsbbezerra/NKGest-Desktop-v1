@@ -19,6 +19,7 @@ import {
   DatePicker,
   Select,
   Drawer,
+  Radio,
 } from "antd";
 import { Header } from "../../../styles/styles";
 import { Link } from "react-router-dom";
@@ -28,6 +29,7 @@ import useEventListener from "@use-it/event-listener";
 import ModulePayment from "../../../components/payments";
 import ModulePrintSale from "../../../templates/printSale";
 import moment from "moment";
+import InputMask from "react-input-mask";
 
 const { TreeNode } = TreeSelect;
 const { TextArea } = Input;
@@ -109,6 +111,9 @@ export default function BalcaoVendas() {
 
   const [menuGeral, setMenuGeral] = useState(false);
   const [findClient, setFindClient] = useState("");
+  const [referenced, setReferenced] = useState("");
+  const [handleDocument, setHandleDocument] = useState("");
+  const [typeDocument, setTypeDocument] = useState("cpf");
 
   useEffect(() => {
     console.log(dateSale);
@@ -348,6 +353,7 @@ export default function BalcaoVendas() {
         address: idAddress,
         data: dateSale,
         descontoValue: descontoValue,
+        refOrderService: referenced,
       })
       .then((response) => {
         setDesc(response.data.ordem.desconto);
@@ -554,6 +560,24 @@ export default function BalcaoVendas() {
       let frasesFiltradas = await clients.filter((frase) => {
         return termos.reduce((resultadoAnterior, termoBuscado) => {
           return resultadoAnterior && frase.name.includes(termoBuscado);
+        }, true);
+      });
+      await setClientsHandle(frasesFiltradas);
+    }
+  }
+
+  useEffect(() => {
+    finderClientsByDocument(handleDocument);
+  }, [handleDocument]);
+
+  async function finderClientsByDocument(text) {
+    if (text === "") {
+      await setClientsHandle([]);
+    } else {
+      let termos = await text.split("_");
+      let frasesFiltradas = await clients.filter((frase) => {
+        return termos.reduce((resultadoAnterior, termoBuscado) => {
+          return resultadoAnterior && frase.cpf_cnpj.includes(termoBuscado);
         }, true);
       });
       await setClientsHandle(frasesFiltradas);
@@ -1213,11 +1237,22 @@ export default function BalcaoVendas() {
             <Row gutter={10}>
               <Col span={24}>
                 <Row gutter={10}>
+                  <Col span={2}>
+                    <label>O.S.</label>
+                    <Input
+                      size="large"
+                      type="number"
+                      value={referenced}
+                      onChange={(text) =>
+                        setReferenced(parseInt(text.target.value))
+                      }
+                    />
+                  </Col>
                   <Col span={14}>
                     <label>Selecione o Cliente</label>
                     <Input size="large" value={clientName} readOnly />
                   </Col>
-                  <Col span={5}>
+                  <Col span={4}>
                     <label style={{ color: "transparent" }}>
                       Data do Pedido
                     </label>
@@ -1231,7 +1266,7 @@ export default function BalcaoVendas() {
                       Buscar Cliente (F3)
                     </Button>
                   </Col>
-                  <Col span={4}>
+                  <Col span={3}>
                     <label>Data do Pedido</label>
                     <DatePicker
                       format="DD/MM/YYYY"
@@ -1903,7 +1938,7 @@ export default function BalcaoVendas() {
               style={{ borderRadius: 5 }}
             >
               <Row gutter={8}>
-                <Col span={24}>
+                <Col span={12}>
                   <label>Digite o Nome do Cliente</label>
                   <Input
                     value={findClient}
@@ -1911,6 +1946,33 @@ export default function BalcaoVendas() {
                       setFindClient(e.target.value.toUpperCase())
                     }
                   />
+                </Col>
+                <Col span={12}>
+                  <label>
+                    Buscar por:{" "}
+                    <Radio.Group
+                      onChange={(e) => setTypeDocument(e.target.value)}
+                      value={typeDocument}
+                    >
+                      <Radio value={"cpf"}>CPF</Radio>
+                      <Radio value={"cnpj"}>CNPJ</Radio>
+                    </Radio.Group>
+                  </label>
+                  {typeDocument === "cpf" ? (
+                    <InputMask
+                      mask={"999.999.999-99"}
+                      className="ant-input"
+                      onChange={(e) => setHandleDocument(e.target.value)}
+                      value={handleDocument}
+                    />
+                  ) : (
+                    <InputMask
+                      mask={"99.999.999/9999-99"}
+                      className="ant-input"
+                      onChange={(e) => setHandleDocument(e.target.value)}
+                      value={handleDocument}
+                    />
+                  )}
                 </Col>
               </Row>
             </Card>
