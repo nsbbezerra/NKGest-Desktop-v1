@@ -578,6 +578,7 @@ export default function BalcaoVendas() {
     setClientCPF(clientInfo.cpf_cnpj);
     setClientObj(clientInfo);
     setAddressObj(clientAddress);
+    setModalHandleClients(false);
   }
 
   async function handleProduto(value) {
@@ -1932,14 +1933,7 @@ export default function BalcaoVendas() {
             width="30%"
             centered
           >
-            {modalPrint === true && (
-              <ModulePrintSale
-                empresa={dados}
-                cliente={clientObj}
-                endereco={addressObj}
-                venda={orderFim}
-              />
-            )}
+            {modalPrint === true && <ModulePrintSale id={orderFim._id} />}
           </Modal>
 
           <Modal

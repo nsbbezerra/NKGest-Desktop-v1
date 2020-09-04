@@ -90,6 +90,7 @@ export default class RelatorioVendas extends Component {
       totalBruto: 0,
       totalLiquido: 0,
       drawer: false,
+      idSaleForPrint: "",
     };
   }
 
@@ -574,16 +575,7 @@ export default class RelatorioVendas extends Component {
   };
 
   handlePrintSale = async (id) => {
-    const resultSale = await this.state.sales.find((obj) => obj._id === id);
-    const address = await this.state.enderecos.find(
-      (obj) => obj.client._id === resultSale.client._id
-    );
-    const client = await this.state.clientes.find(
-      (obj) => obj._id === resultSale.client._id
-    );
-    await this.setState({ orderToPrint: resultSale });
-    await this.setState({ addressToPrint: address });
-    await this.setState({ clientToPrint: client });
+    await this.setState({ idSaleForPrint: id });
     this.setState({ modalPrintSale: true });
   };
 
@@ -1873,12 +1865,7 @@ export default class RelatorioVendas extends Component {
           centered
         >
           {this.state.modalPrintSale === true && (
-            <PrintSale
-              empresa={this.state.dados}
-              cliente={this.state.clientToPrint}
-              endereco={this.state.addressToPrint}
-              venda={this.state.orderToPrint}
-            />
+            <PrintSale id={this.state.idSaleForPrint} />
           )}
         </Modal>
 

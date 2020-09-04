@@ -14,7 +14,6 @@ import {
   Input,
   Descriptions,
   Layout,
-  Menu,
 } from "antd";
 import { Link } from "react-router-dom";
 import { Header } from "../../../styles/styles";
@@ -25,7 +24,6 @@ import PrintOrder from "../../../templates/printOrder";
 const { TreeNode } = TreeSelect;
 const { Option } = Select;
 const { TabPane } = Tabs;
-const { Content, Sider } = Layout;
 
 export default function GerVendas() {
   const [find, setFind] = useState(1);
@@ -64,6 +62,8 @@ export default function GerVendas() {
   const [descontoValue, setDescontoValue] = useState(0);
   const [brutoValue, setBrutoValue] = useState(0);
   const [liquidValue, setLiquidoValue] = useState(0);
+
+  const [idSaleToPrint, setIdSaleToPrint] = useState("");
 
   function erro(title, message) {
     Modal.error({
@@ -264,14 +264,7 @@ export default function GerVendas() {
   }
 
   async function handlePrintSale(id) {
-    const result = await vendas.find((obj) => obj._id === id);
-    const address = await enderecos.find(
-      (obj) => obj.client._id === result.client._id
-    );
-    const client = await clientes.find((obj) => obj._id === result.client._id);
-    await setOrderToPrint(result);
-    await setAddressToPrint(address);
-    await setClientToPrint(client);
+    await setIdSaleToPrint(id);
     setModalPrintSale(true);
   }
 
@@ -958,14 +951,7 @@ export default function GerVendas() {
         width="30%"
         centered
       >
-        {modalPrintSale === true && (
-          <PrintSale
-            empresa={dados}
-            cliente={clientToPrint}
-            endereco={addressToPrint}
-            venda={orderToPrint}
-          />
-        )}
+        {modalPrintSale === true && <PrintSale id={idSaleToPrint} />}
       </Modal>
 
       <Modal

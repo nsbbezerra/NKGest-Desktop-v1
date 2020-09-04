@@ -5,6 +5,7 @@ const path = require("path");
 const isDev = require("electron-is-dev");
 let mainWindow;
 const Menu = electron.Menu;
+const PDFWindow = require("electron-pdf-window");
 
 Menu.setApplicationMenu(false);
 
@@ -28,8 +29,6 @@ function createWindow() {
       ? "http://localhost:3000"
       : `file://${path.join(__dirname, "../build/index.html")}`
   );
-  mainWindow.setMenuBarVisibility(false);
-  mainWindow.removeMenu();
   mainWindow.on("closed", () => (mainWindow = null));
   mainWindow.webContents.on(
     "new-window",
@@ -37,6 +36,14 @@ function createWindow() {
       if (frameName === "PrintPdf") {
         event.preventDefault();
         electron.shell.openExternal(url);
+      }
+      if (frameName === "pdfSale") {
+        event.preventDefault();
+        const win = new PDFWindow({
+          width: options.width,
+          height: options.height,
+        });
+        win.loadURL(url);
       }
     }
   );
