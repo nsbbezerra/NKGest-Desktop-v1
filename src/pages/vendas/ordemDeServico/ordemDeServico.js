@@ -7,11 +7,9 @@ import {
   Input,
   Table,
   Card,
-  TreeSelect,
   Divider,
   InputNumber,
   Modal,
-  Select,
   Spin,
   Popconfirm,
   Statistic,
@@ -19,6 +17,7 @@ import {
   Tooltip,
   DatePicker,
   Radio,
+  Drawer,
 } from "antd";
 import { Header } from "../../../styles/styles";
 import { Link } from "react-router-dom";
@@ -29,8 +28,6 @@ import useEventListener from "@use-it/event-listener";
 import moment from "moment";
 import InputMask from "react-input-mask";
 
-const { TreeNode } = TreeSelect;
-const { Option } = Select;
 const { TextArea } = Input;
 
 export default function OrdemDeServico() {
@@ -91,8 +88,16 @@ export default function OrdemDeServico() {
   const [typeDocument, setTypeDocument] = useState("cpf");
   const [findClient, setFindClient] = useState("");
   const [clientsHandle, setClientsHandle] = useState([]);
+  const [menuGeral, setMenuGeral] = useState(false);
+
+  const [modalEquipament, setModalEquipament] = useState("");
+  const [equipo, setEquipo] = useState("");
+  const [marca, setMarca] = useState("");
+  const [modelo, setModelo] = useState("");
+  const [serie, setSerie] = useState("");
 
   async function allClear() {
+    setMenuGeral(false);
     await setVeicles([]);
     await setVeicleCli("");
     await setClientId("");
@@ -111,17 +116,28 @@ export default function OrdemDeServico() {
     await setClientObj({});
     await setFinderProduct("");
     await setDateOrder(moment());
+    setEquipo("");
+    setMarca("");
+    setModelo("");
+    setSerie("");
   }
 
   function handler({ key }) {
     if (key === "F2") {
       setModalHandleProducts(true);
+      document.getElementById("quantity").focus();
     }
     if (key === "F3") {
       setModalHandleClients(true);
+      let inputText = document.getElementById("input-client");
+      inputText.focus();
     }
     if (key === "F4") {
       allClear();
+    }
+    if (key === "F5") {
+      setModalEquipament(true);
+      document.getElementById("equipo").focus();
     }
     if (key === "F6") {
       if (modalHandleProducts === false) {
@@ -142,23 +158,41 @@ export default function OrdemDeServico() {
     if (key === "F10") {
       document.getElementById("totalLiquid").focus();
     }
+    if (key === "F12") {
+      setMenuGeral(!menuGeral);
+    }
   }
 
   useEventListener("keydown", handler);
 
   async function handleSendWaitOrdem() {
+    if (clientId === "") {
+      warningWar("Atenção", "Selecione um cliente");
+      return false;
+    }
+    if (!totalOrdemLiquid) {
+      warningWar("Atenção", "O campo: TOTAL LIQUIDO está vazio");
+      return false;
+    }
+    if (equipo === "") {
+      warningWar("Atenção", "O campo: EQUIPAMENTO está vazio");
+      return false;
+    }
     setLoadingWait(true);
     await api
       .post("/orders/createServiceOrca", {
         client: clientId,
         funcionario: idVendedor,
-        veicles: veicleCli,
         services: serviceSell,
         desconto: desconto,
         valueLiquido: totalOrdemLiquid,
         valueBruto: totalOrdem,
         obs: observation,
         address: addressCli._id,
+        equipo: equipo,
+        marca: marca,
+        modelo: modelo,
+        referencia: serie,
       })
       .then((response) => {
         success("Sucesso", response.data.message);
@@ -182,28 +216,8 @@ export default function OrdemDeServico() {
       warningWar("Atenção", "Selecione um veículo");
       return false;
     }
+    setMenuGeral(false);
     setModalWait(true);
-  }
-
-  async function findServices() {
-    setSpinner(true);
-    await api
-      .get("/admin/listService")
-      .then((response) => {
-        setServices(response.data.services);
-        setSpinner(false);
-      })
-      .catch((error) => {
-        if (error.message === "Network Error") {
-          erro("Erro", "Sem conexão com o servidor");
-          setSpinner(false);
-          return false;
-        } else {
-          erro("Erro", error.response.data.message);
-          setSpinner(false);
-          return false;
-        }
-      });
   }
 
   async function handleFinished() {
@@ -256,12 +270,16 @@ export default function OrdemDeServico() {
       warningWar("Atenção", "Selecione um cliente");
       return false;
     }
-    if (veicleCli === "") {
-      warningWar("Atenção", "Selecione um veículo");
-      return false;
-    }
     if (!totalOrdemLiquid) {
       warningWar("Atenção", "O campo: TOTAL LIQUIDO está vazio");
+      return false;
+    }
+    if (equipo === "") {
+      warningWar("Atenção", "O campo: EQUIPAMENTO está vazio");
+      return false;
+    }
+    if (!idVendedor) {
+      warningWar("Atenção", "Não existe um vendedor selecionado");
       return false;
     }
     setLoading(true);
@@ -269,13 +287,17 @@ export default function OrdemDeServico() {
       .post("/orders/createService", {
         client: clientId,
         funcionario: idVendedor,
-        veicles: veicleCli,
         services: serviceSell,
         desconto: desconto,
         valueLiquido: totalOrdemLiquid,
         valueBruto: totalOrdem,
         obs: observation,
         address: addressCli._id,
+        equipo: equipo,
+        marca: marca,
+        modelo: modelo,
+        referencia: serie,
+        data: dateOrder,
       })
       .then((response) => {
         setOrdemFim(response.data.ordem);
@@ -348,6 +370,7 @@ export default function OrdemDeServico() {
   }
 
   async function finders() {
+    setMenuGeral(false);
     setSpinner(true);
     await api
       .get("/orders/listsOrderService")
@@ -359,20 +382,6 @@ export default function OrdemDeServico() {
       })
       .catch((error) => {
         erro("Erro", error.message);
-        setSpinner(false);
-      });
-  }
-
-  async function findVeicles(id) {
-    setSpinner(true);
-    await api
-      .get(`/register/findVeicles/${id}`)
-      .then((response) => {
-        setVeicles(response.data.veicles);
-        setSpinner(false);
-      })
-      .catch((error) => {
-        erro("Erro", error.response.data.message);
         setSpinner(false);
       });
   }
@@ -400,9 +409,13 @@ export default function OrdemDeServico() {
     finderClientsBySource(findClient);
   }, [findClient]);
 
+  useEffect(() => {
+    setClientsHandle(clients);
+  }, [modalHandleClients]);
+
   async function finderClientsBySource(text) {
     if (text === "") {
-      await setClientsHandle([]);
+      await setClientsHandle(clients);
     } else {
       let termos = await text.split(" ");
       let frasesFiltradas = await clients.filter((frase) => {
@@ -539,9 +552,13 @@ export default function OrdemDeServico() {
     finderProductsBySource(finderProduct);
   }, [finderProduct]);
 
+  useEffect(() => {
+    setProductsHandle(services);
+  }, [modalHandleProducts]);
+
   async function finderProductsBySource(text) {
     if (text === "") {
-      await setProductsHandle([]);
+      await setProductsHandle(services);
     } else {
       let filtro = await services.filter((val) => val.name.includes(text));
       await setProductsHandle(filtro);
@@ -726,17 +743,29 @@ export default function OrdemDeServico() {
     {
       key: "1",
       info: "TOTAL BRUTO",
-      value: `R$ ${ordemFim.valueBruto}`,
+      value:
+        JSON.stringify(ordemFim) === "{}"
+          ? 0
+          : ordemFim.valueBruto.toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            }),
     },
     {
       key: "2",
       info: "DESCONTO",
-      value: `% ${ordemFim.desconto}`,
+      value: JSON.stringify(ordemFim) === "{}" ? 0 : `% ${ordemFim.desconto}`,
     },
     {
       key: "3",
       info: "TOTAL A PAGAR",
-      value: `R$ ${ordemFim.valueLiquido}`,
+      value:
+        JSON.stringify(ordemFim) === "{}"
+          ? 0
+          : ordemFim.valueLiquido.toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            }),
     },
   ];
 
@@ -811,7 +840,7 @@ export default function OrdemDeServico() {
             display: "flex",
             flexDirection: "row",
             position: "absolute",
-            right: 0,
+            right: 5,
             alignItems: "center",
           }}
         >
@@ -839,16 +868,13 @@ export default function OrdemDeServico() {
             }}
           >
             <Row gutter={10}>
-              <Col
-                span={19}
-                style={{ borderRight: "1px solid lightgray", paddingRight: 5 }}
-              >
+              <Col span={24}>
                 <Row gutter={8}>
-                  <Col span={14}>
+                  <Col span={7}>
                     <label>Selecione o cliente</label>
                     <Input size="large" value={clientName} readOnly />
                   </Col>
-                  <Col span={5}>
+                  <Col span={4}>
                     <label style={{ color: "transparent" }}>
                       Data do Pedido
                     </label>
@@ -862,16 +888,44 @@ export default function OrdemDeServico() {
                       Buscar Cliente (F3)
                     </Button>
                   </Col>
-                  <Col span={5}>
+                  <Col span={7}>
+                    <label>Equipamento</label>
+                    <Input size="large" value={equipo} readOnly />
+                  </Col>
+                  <Col span={1}>
+                    <label>(F5)</label>
+                    <Tooltip title="Inserir Informações">
+                      <Button
+                        icon="edit"
+                        onClick={() => setModalEquipament(!modalEquipament)}
+                        size="large"
+                        type="primary"
+                        style={{ width: "100%" }}
+                      />
+                    </Tooltip>
+                  </Col>
+                  <Col span={4}>
                     <label>Data do Pedido</label>
                     <DatePicker
                       format="DD/MM/YYYY"
                       style={{ width: "100%" }}
                       showToday={false}
-                      value={dateOrder}
-                      onChange={(value) => setDateOrder(value)}
+                      value={moment(dateOrder)}
+                      onChange={(value) => setDateOrder(moment(value).format())}
                       size="large"
                     />
+                  </Col>
+                  <Col span={1}>
+                    <label>(F12)</label>
+                    <Tooltip title="Abir Menu">
+                      <Button
+                        icon="menu-fold"
+                        onClick={() => setMenuGeral(!menuGeral)}
+                        size="large"
+                        type="primary"
+                        style={{ width: "100%" }}
+                      />
+                    </Tooltip>
                   </Col>
                 </Row>
 
@@ -919,60 +973,6 @@ export default function OrdemDeServico() {
                     </Col>
                   </Row>
                 </Card>
-              </Col>
-              <Col span={5}>
-                <Row>
-                  <Col span={12} style={{ paddingRight: 2.5 }}>
-                    <Button
-                      onClick={() => findServices()}
-                      type="default"
-                      icon="sync"
-                      style={{ width: "100%" }}
-                    >
-                      Atualizar
-                    </Button>
-                  </Col>
-                  <Col span={12} style={{ paddingLeft: 2.5 }}>
-                    <Button
-                      onClick={() => findServices()}
-                      type="primary"
-                      icon="file-text"
-                      style={{ width: "100%" }}
-                    >
-                      Orçamentos
-                    </Button>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={12} style={{ paddingRight: 2.5 }}>
-                    <Button
-                      onClick={() => handleWaitOrder(true)}
-                      type="default"
-                      icon="save"
-                      style={{ width: "100%", marginTop: 5 }}
-                    >
-                      Salvar Como
-                    </Button>
-                  </Col>
-                  <Col span={12} style={{ paddingLeft: 2.5 }}>
-                    <Button
-                      onClick={() => handleWaitOrder(true)}
-                      type="primary"
-                      icon="save"
-                      style={{ width: "100%", marginTop: 5 }}
-                    >
-                      Salvar Atual
-                    </Button>
-                  </Col>
-                </Row>
-                <Button
-                  onClick={() => allClear()}
-                  type="danger"
-                  icon="close"
-                  style={{ width: "100%", marginTop: 5 }}
-                >
-                  Cancelar (F4)
-                </Button>
               </Col>
             </Row>
           </Card>
@@ -1087,7 +1087,7 @@ export default function OrdemDeServico() {
                       loading={loading}
                       onClick={() => handleSaveOrder()}
                     >
-                      Finalizar Venda (F9)
+                      Finalizar O.S. (F9)
                     </Button>
                   </Col>
                 </Row>
@@ -1396,14 +1396,59 @@ export default function OrdemDeServico() {
             width="30%"
             centered
           >
-            {modalPrint === true && (
-              <TemplatePrint
-                empresa={dados}
-                cliente={clientObj}
-                endereco={addressCli}
-                venda={ordemFim}
-              />
-            )}
+            {modalPrint === true && <TemplatePrint id={ordemFim._id} />}
+          </Modal>
+
+          <Modal
+            visible={modalEquipament}
+            title="Identificação do Equipamento"
+            onCancel={() => setModalEquipament(false)}
+            footer={[
+              <Button
+                key="back"
+                icon="close"
+                type="primary"
+                onClick={() => setModalEquipament(false)}
+              >
+                Fechar
+              </Button>,
+            ]}
+            width="80%"
+            centered
+          >
+            <Row gutter={10}>
+              <Col span={24}>
+                <label>Equipamento</label>
+                <Input
+                  id="equipo"
+                  value={equipo}
+                  onChange={(e) => setEquipo(e.target.value.toUpperCase())}
+                />
+              </Col>
+            </Row>
+            <Row gutter={10} style={{ marginTop: 10 }}>
+              <Col span={8}>
+                <label>Marca</label>
+                <Input
+                  value={marca}
+                  onChange={(e) => setMarca(e.target.value.toUpperCase())}
+                />
+              </Col>
+              <Col span={8}>
+                <label>Modelo</label>
+                <Input
+                  value={modelo}
+                  onChange={(e) => setModelo(e.target.value.toUpperCase())}
+                />
+              </Col>
+              <Col span={8}>
+                <label>Identificação</label>
+                <Input
+                  value={serie}
+                  onChange={(e) => setSerie(e.target.value.toUpperCase())}
+                />
+              </Col>
+            </Row>
           </Modal>
 
           <Modal
@@ -1424,6 +1469,7 @@ export default function OrdemDeServico() {
                 <Col span={12}>
                   <label>Digite o Nome do Cliente</label>
                   <Input
+                    id="input-client"
                     value={findClient}
                     onChange={(e) =>
                       setFindClient(e.target.value.toUpperCase())
@@ -1469,6 +1515,43 @@ export default function OrdemDeServico() {
               style={{ marginTop: 10 }}
             />
           </Modal>
+
+          <Drawer
+            title="Menu"
+            placement="left"
+            onClose={() => setMenuGeral(false)}
+            visible={menuGeral}
+          >
+            <Button
+              onClick={() => finders()}
+              type="default"
+              icon="sync"
+              style={{ width: "100%" }}
+              size="large"
+            >
+              Atualizar
+            </Button>
+            <Divider />
+            <Button
+              onClick={() => handleWaitOrder(true)}
+              type="default"
+              icon="save"
+              style={{ width: "100%", marginTop: 5 }}
+              size="large"
+            >
+              Salvar Orçamento
+            </Button>
+            <Divider />
+            <Button
+              onClick={() => allClear()}
+              type="danger"
+              icon="close"
+              style={{ width: "100%", marginTop: 5 }}
+              size="large"
+            >
+              Cancelar (F4)
+            </Button>
+          </Drawer>
         </div>
       </Spin>
     </>

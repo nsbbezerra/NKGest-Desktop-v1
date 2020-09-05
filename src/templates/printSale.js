@@ -4,9 +4,12 @@ import { Radio, Button, Divider, Modal } from "antd";
 import Matri from "../assets/print.svg";
 import Norm from "../assets/printer.svg";
 import api from "../config/axios";
+import Lottie from "react-lottie";
+import animationData from "../animations/printer.json";
 
 function PrintSaleTemplate({ id }) {
   const [modePrint, setModePrint] = useState("");
+  const [loading, setLoading] = useState(false);
 
   async function findPrintMode() {
     const printMode = await localStorage.getItem("print");
@@ -16,6 +19,15 @@ function PrintSaleTemplate({ id }) {
       return;
     }
   }
+
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: animationData,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice",
+    },
+  };
 
   function erro(title, message) {
     Modal.error({
@@ -38,15 +50,18 @@ function PrintSaleTemplate({ id }) {
       erro("Warning", "Selecione um modo de impressão");
       return false;
     }
+    setLoading(true);
     await api
       .post("/printer/sale", {
         id: id,
         mode: modePrint,
       })
       .then((response) => {
+        setLoading(false);
         handlePrint(response.data.link);
       })
       .catch((error) => {
+        setLoading(false);
         if (!error.response.data) {
           erro("Erro", error.response);
         } else {
@@ -129,6 +144,36 @@ function PrintSaleTemplate({ id }) {
           Imprimir
         </Button>
       </div>
+      <Modal
+        visible={loading}
+        closable={false}
+        title={false}
+        footer={false}
+        centered
+      >
+        <div
+          style={{
+            display: "flex",
+            width: "100%",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "column",
+          }}
+        >
+          <Lottie options={defaultOptions} width={"50%"} />
+
+          <p
+            style={{
+              marginTop: 30,
+              fontSize: 25,
+              fontWeight: "bold",
+              marginBottom: -10,
+            }}
+          >
+            Gerando Relatório
+          </p>
+        </div>
+      </Modal>
     </div>
   );
 }

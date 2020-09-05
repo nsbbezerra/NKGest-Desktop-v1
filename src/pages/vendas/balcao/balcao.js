@@ -187,9 +187,11 @@ export default function BalcaoVendas() {
   function handler({ key }) {
     if (key === "F2") {
       setModalHandleProducts(true);
+      document.getElementById("quantity").focus();
     }
     if (key === "F3") {
       setModalHandleClients(true);
+      document.getElementById("input-client").focus();
     }
     if (key === "F6") {
       if (modalHandleProducts === false) {
@@ -215,12 +217,16 @@ export default function BalcaoVendas() {
     }
     if (key === "F10") {
       setModalDesc(true);
+      document.getElementById("desconto").focus();
     }
     if (key === "F4") {
       setModalDelSale(true);
     }
     if (key === "F11") {
       finalizeOrcament();
+    }
+    if (key === "F12") {
+      setMenuGeral(!menuGeral);
     }
   }
 
@@ -552,9 +558,13 @@ export default function BalcaoVendas() {
     finderClientsBySource(findClient);
   }, [findClient]);
 
+  useEffect(() => {
+    setClientsHandle(clients);
+  }, [modalHandleClients]);
+
   async function finderClientsBySource(text) {
     if (text === "") {
-      await setClientsHandle([]);
+      await setClientsHandle(clients);
     } else {
       let termos = await text.split(" ");
       let frasesFiltradas = await clients.filter((frase) => {
@@ -572,7 +582,7 @@ export default function BalcaoVendas() {
 
   async function finderClientsByDocument(text) {
     if (text === "") {
-      await setClientsHandle([]);
+      await setClientsHandle(clients);
     } else {
       let termos = await text.split("_");
       let frasesFiltradas = await clients.filter((frase) => {
@@ -679,9 +689,13 @@ export default function BalcaoVendas() {
     finderProductsBySource(finderProduct);
   }, [finderProduct]);
 
+  useEffect(() => {
+    setProductsHandle(products);
+  }, [modalHandleProducts]);
+
   async function finderProductsBySource(text) {
     if (text === "") {
-      await setProductsHandle([]);
+      await setProductsHandle(products);
     } else {
       let termos = await text.split(" ");
       let frasesFiltradas = await products.filter((frase) => {
@@ -988,17 +1002,23 @@ export default function BalcaoVendas() {
     {
       key: "1",
       info: "TOTAL BRUTO",
-      value: `R$ ${replaceValue(brut)}`,
+      value: `${replaceValue(brut).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      })}`,
     },
     {
       key: "2",
       info: "DESCONTO",
-      value: `% ${replaceValue(desc)}`,
+      value: `${replaceValue(desc)} %`,
     },
     {
       key: "3",
       info: "TOTAL A PAGAR",
-      value: `R$ ${replaceValue(liquid)}`,
+      value: `${replaceValue(liquid).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      })}`,
     },
   ];
 
@@ -1278,14 +1298,16 @@ export default function BalcaoVendas() {
                     />
                   </Col>
                   <Col span={1}>
-                    <label style={{ color: "transparent" }}>D</label>
-                    <Button
-                      icon="menu-fold"
-                      onClick={() => setMenuGeral(!menuGeral)}
-                      size="large"
-                      type="primary"
-                      style={{ width: "100%" }}
-                    />
+                    <label>(F12)</label>
+                    <Tooltip title="Abrir Menu">
+                      <Button
+                        icon="menu-fold"
+                        onClick={() => setMenuGeral(!menuGeral)}
+                        size="large"
+                        type="primary"
+                        style={{ width: "100%" }}
+                      />
+                    </Tooltip>
                   </Col>
                 </Row>
 
@@ -1348,7 +1370,11 @@ export default function BalcaoVendas() {
             </Col>
           </Row>
 
-          <Row style={{ marginTop: 10, marginBottom: 90 }}>
+          <Divider style={{ fontSize: 15, fontWeight: "bold" }}>
+            PRODUTOS
+          </Divider>
+
+          <Row style={{ marginBottom: 90 }}>
             <Col span={24} style={{ overflow: "auto" }}>
               <Table
                 pagination={false}
@@ -1941,6 +1967,7 @@ export default function BalcaoVendas() {
                 <Col span={12}>
                   <label>Digite o Nome do Cliente</label>
                   <Input
+                    id="input-client"
                     value={findClient}
                     onChange={(e) =>
                       setFindClient(e.target.value.toUpperCase())
@@ -2024,6 +2051,7 @@ export default function BalcaoVendas() {
               onChange={(e) => setDesconto(e.target.value)}
               addonAfter="%"
               style={{ width: "100%" }}
+              id="desconto"
             />
 
             <span

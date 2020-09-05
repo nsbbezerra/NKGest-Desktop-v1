@@ -91,6 +91,7 @@ export default class RelatorioVendas extends Component {
       totalLiquido: 0,
       drawer: false,
       idSaleForPrint: "",
+      idOrderForPrint: "",
     };
   }
 
@@ -580,16 +581,7 @@ export default class RelatorioVendas extends Component {
   };
 
   handlePrintOrder = async (id) => {
-    const resultSale = await this.state.services.find((obj) => obj._id === id);
-    const address = await this.state.enderecos.find(
-      (obj) => obj.client._id === resultSale.client._id
-    );
-    const client = await this.state.clientes.find(
-      (obj) => obj._id === resultSale.client._id
-    );
-    await this.setState({ serviceToPrint: resultSale });
-    await this.setState({ addressToPrint: address });
-    await this.setState({ clientToPrint: client });
+    await this.setState({ idOrderForPrint: id });
     this.setState({ modalPrintOrder: true });
   };
 
@@ -1276,7 +1268,7 @@ export default class RelatorioVendas extends Component {
                 onClick={() => this.finders()}
                 style={{ position: "absolute", right: 55, top: 0 }}
               >
-                Atualizar Vendas
+                Atualizar Ordens
               </Button>
               <Button
                 size="large"
@@ -1878,17 +1870,12 @@ export default class RelatorioVendas extends Component {
           centered
         >
           {this.state.modalPrintOrder === true && (
-            <PrintOrder
-              empresa={this.state.dados}
-              cliente={this.state.clientToPrint}
-              endereco={this.state.addressToPrint}
-              venda={this.state.serviceToPrint}
-            />
+            <PrintOrder id={this.state.idOrderForPrint} />
           )}
         </Modal>
 
         <Drawer
-          title="Menu"
+          title="Menu."
           placement="left"
           onClose={() => this.setState({ drawer: false })}
           visible={this.state.drawer}

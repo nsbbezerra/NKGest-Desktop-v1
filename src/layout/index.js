@@ -13,7 +13,6 @@ import {
   Tooltip,
   PageHeader,
   Divider,
-  AutoComplete,
 } from "antd";
 import { Link, MemoryRouter, withRouter } from "react-router-dom";
 import "./style.css";
@@ -288,17 +287,6 @@ class Layouts extends Component {
                         {this.state.nameFunc}
                       </span>
                     </div>
-                    <Divider type="vertical" />
-                    <AutoComplete style={{ width: 200 }}>
-                      <Input
-                        prefix={
-                          <Icon
-                            type="search"
-                            placeholder="Buscar na Aplicação"
-                          />
-                        }
-                      />
-                    </AutoComplete>
                     <Divider type="vertical" />
                     <Dropdown overlay={menu} placement="bottomCenter">
                       <Button icon="tool" type="primary" />

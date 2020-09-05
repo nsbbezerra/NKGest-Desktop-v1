@@ -64,6 +64,7 @@ export default function GerVendas() {
   const [liquidValue, setLiquidoValue] = useState(0);
 
   const [idSaleToPrint, setIdSaleToPrint] = useState("");
+  const [idOrdeToPrint, setIdOrderToPrint] = useState("");
 
   function erro(title, message) {
     Modal.error({
@@ -269,14 +270,7 @@ export default function GerVendas() {
   }
 
   async function handlePrintOrder(id) {
-    const result = await ordens.find((obj) => obj._id === id);
-    const address = await enderecos.find(
-      (obj) => obj.client._id === result.client._id
-    );
-    const client = await clientes.find((obj) => obj._id === result.client._id);
-    await setOrderToPrint(result);
-    await setAddressToPrint(address);
-    await setClientToPrint(client);
+    await setIdOrderToPrint(id);
     setModalPrintOrder(true);
   }
 
@@ -583,17 +577,32 @@ export default function GerVendas() {
     {
       key: "1",
       info: "TOTAL BRUTO",
-      value: `R$ ${orderToPrint.valueBruto}`,
+      value:
+        JSON.stringify(orderToPrint) !== "{}"
+          ? orderToPrint.valueBruto.toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            })
+          : 0,
     },
     {
       key: "2",
       info: "DESCONTO",
-      value: `% ${orderToPrint.desconto}`,
+      value:
+        JSON.stringify(orderToPrint) !== "{}"
+          ? `% ${orderToPrint.desconto}`
+          : 0,
     },
     {
       key: "3",
       info: "TOTAL A PAGAR",
-      value: `R$ ${orderToPrint.valueLiquido}`,
+      value:
+        JSON.stringify(orderToPrint) !== "{}"
+          ? orderToPrint.valueLiquido.toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            })
+          : 0,
     },
   ];
 
@@ -962,14 +971,7 @@ export default function GerVendas() {
         width="30%"
         centered
       >
-        {modalPrintOrder === true && (
-          <PrintOrder
-            empresa={dados}
-            cliente={clientToPrint}
-            endereco={addressToPrint}
-            venda={orderToPrint}
-          />
-        )}
+        {modalPrintOrder === true && <PrintOrder id={idOrdeToPrint} />}
       </Modal>
 
       <Modal
