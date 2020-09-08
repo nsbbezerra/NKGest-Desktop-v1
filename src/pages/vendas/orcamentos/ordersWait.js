@@ -166,15 +166,6 @@ export default function Orcamentos() {
         setOrcaments(response.data.order);
         setLoading(false);
         setModalSearch(false);
-        setSearchType(null);
-        setAno("");
-        setMes("");
-        setDia("");
-        setFuncionario("");
-        setCliente("");
-        setFuncName("");
-        setClientName("");
-        setMes2("");
       })
       .catch((error) => {
         erro("Erro", error.response.data.message);
@@ -442,7 +433,7 @@ export default function Orcamentos() {
     }
     await setTotalOrdemLiquid(result.valueLiquido);
     await setOrderToSave(result._id);
-    await setVeiculoCliente(result.veicles.model);
+    await setVeiculoCliente(result.equipo);
     await setTotalOrdem(result.valueBruto);
     await setServicesUpdate(result.services);
     await setNomeClientDesc(clientObj.name);
@@ -636,6 +627,15 @@ export default function Orcamentos() {
 
   const columns = [
     {
+      title: "Ref.",
+      dataIndex: "referenced",
+      key: "referenced",
+      width: "5%",
+      align: "center",
+      render: (v) =>
+        v ? <Button shape="circle" size="small" icon="check" /> : "",
+    },
+    {
       title: "Nº",
       dataIndex: "number",
       key: "number",
@@ -646,39 +646,24 @@ export default function Orcamentos() {
       title: "Cliente",
       dataIndex: "client.name",
       key: "client.name",
+      ellipsis: true,
+      size: "25%",
     },
     {
-      title: "Veículo",
-      dataIndex: "veicles.model",
-      key: "veicles.model",
+      title: "Equipamento",
+      dataIndex: "equipo",
+      key: "equipo",
+      render: (value, other) =>
+        value ? (
+          <span>{`${other.equipo} - ${other.marca} - ${other.modelo} - REF: ${other.referencia}`}</span>
+        ) : (
+          ""
+        ),
+      size: "40%",
+      ellipsis: true,
     },
     {
-      title: "Valor Bruto(R$)",
-      dataIndex: "valueBruto",
-      key: "valueBruto",
-      render: (value) => (
-        <Statistic
-          value={value}
-          valueStyle={{ fontSize: 15.5 }}
-          prefix="R$"
-          precision={2}
-        />
-      ),
-      width: "12%",
-      align: "right",
-    },
-    {
-      title: "Desconto (%)",
-      dataIndex: "desconto",
-      key: "desconto",
-      render: (value) => (
-        <Statistic value={value} valueStyle={{ fontSize: 15.5 }} prefix="%" />
-      ),
-      width: "12%",
-      align: "right",
-    },
-    {
-      title: "Valor (R$)",
+      title: "Valor",
       dataIndex: "valueLiquido",
       key: "valueLiquido",
       render: (value) => (
@@ -735,17 +720,23 @@ export default function Orcamentos() {
     {
       key: "1",
       info: "TOTAL BRUTO",
-      value: `R$ ${brut}`,
+      value: `${brut.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      })}`,
     },
     {
       key: "2",
       info: "DESCONTO",
-      value: `% ${desc}`,
+      value: `${desc} %`,
     },
     {
       key: "3",
       info: "TOTAL A PAGAR",
-      value: `R$ ${liquid}`,
+      value: `${liquid.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      })}`,
     },
   ];
 
@@ -1013,7 +1004,7 @@ export default function Orcamentos() {
 
       <Modal
         visible={modalSell}
-        title="Finalizar a Ordem de Serviço"
+        title="Ordem de Serviço"
         onCancel={() => setModalSell(false)}
         footer={false}
         width="95%"
@@ -1036,7 +1027,7 @@ export default function Orcamentos() {
                   </Col>
 
                   <Col span={8}>
-                    <label>Veículo</label>
+                    <label>Equipamento</label>
                     <Input
                       type="text"
                       size="large"
@@ -1400,7 +1391,7 @@ export default function Orcamentos() {
 
       <Modal
         visible={modalFinished}
-        title="Informações da Venda"
+        title="Informações da Ordem de Serviço"
         closable={false}
         footer={[
           <Button
@@ -1422,8 +1413,9 @@ export default function Orcamentos() {
             Imprimir Ordem de Serviço
           </Button>,
         ]}
-        width="70%"
-        style={{ top: 20 }}
+        width="80%"
+        centered
+        bodyStyle={{ overflow: "auto", height: "79vh" }}
       >
         <Card
           size="small"

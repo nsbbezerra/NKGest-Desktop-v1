@@ -193,6 +193,7 @@ export default function OrdemDeServico() {
         marca: marca,
         modelo: modelo,
         referencia: serie,
+        data: dateOrder,
       })
       .then((response) => {
         success("Sucesso", response.data.message);
@@ -212,8 +213,8 @@ export default function OrdemDeServico() {
       warningWar("Atenção", "Selecione um cliente");
       return false;
     }
-    if (veicleCli === "") {
-      warningWar("Atenção", "Selecione um veículo");
+    if (equipo === "") {
+      warningWar("Atenção", "O campo: EQUIPAMENTO está vazio");
       return false;
     }
     setMenuGeral(false);
@@ -1423,6 +1424,7 @@ export default function OrdemDeServico() {
                   id="equipo"
                   value={equipo}
                   onChange={(e) => setEquipo(e.target.value.toUpperCase())}
+                  size="large"
                 />
               </Col>
             </Row>
