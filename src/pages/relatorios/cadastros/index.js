@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 
 import Clientes from "./clientes";
 import Fornecedores from "./fornecedores";
-import Funcionarios from "./funcionarios";
 
 const { TabPane } = Tabs;
 
@@ -47,18 +46,6 @@ export default class RelatorioCadastro extends Component {
               key="2"
             >
               <Fornecedores />
-            </TabPane>
-
-            <TabPane
-              tab={
-                <span>
-                  <Icon type="idcard" />
-                  <span>Funcionários</span>
-                </span>
-              }
-              key="3"
-            >
-              <Funcionarios />
             </TabPane>
           </Tabs>
         </div>

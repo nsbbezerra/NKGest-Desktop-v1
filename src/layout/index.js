@@ -233,7 +233,6 @@ class Layouts extends Component {
           style={{
             height: "100vh",
             maxHeight: "100vh",
-            border: "2px solid #001529",
           }}
         >
           <div
@@ -254,21 +253,6 @@ class Layouts extends Component {
                     alt="logo nkgest"
                     style={{ height: 25, marginLeft: -15, marginBottom: 5 }}
                   />
-                  <Tooltip
-                    title={
-                      this.state.collapse === true
-                        ? "Expandir Menu"
-                        : "Encolher Menu"
-                    }
-                  >
-                    <Icon
-                      className="custom-trigger btn-blue"
-                      type={this.state.collapse ? "menu-unfold" : "menu-fold"}
-                      onClick={() =>
-                        this.setState({ collapse: !this.state.collapse })
-                      }
-                    />
-                  </Tooltip>
                 </div>
               </div>
               <PageHeader
@@ -340,17 +324,16 @@ class Layouts extends Component {
               onCollapse={() =>
                 this.setState({ collapse: !this.state.collapse })
               }
-              trigger={null}
               style={{
                 height: "100%",
                 maxHeight: "100%",
                 overflowX: "hidden",
-                boxShadow: "0px 0px 7px rgba(0,0,0,.3)",
+                boxShadow: "0px 0px 7px rgba(0,0,0,.6)",
                 zIndex: 1000,
               }}
-              theme="light"
+              theme="dark"
             >
-              <Menu theme="light" mode="vertical" inlineCollapsed={true}>
+              <Menu theme="dark" mode="vertical" inlineCollapsed={true}>
                 <SubMenu
                   title={
                     <span className="submenu-title-wrapper">

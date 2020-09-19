@@ -14,6 +14,7 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1340,
     height: 700,
+    hasShadow: true,
     webPreferences: {
       nativeWindowOpen: true,
       nodeIntegration: true,
@@ -42,6 +43,8 @@ function createWindow() {
         const win = new PDFWindow({
           width: options.width,
           height: options.height,
+          maximized: true,
+          icon: iconPath,
         });
         win.loadURL(url);
       }
