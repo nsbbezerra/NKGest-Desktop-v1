@@ -23,7 +23,6 @@
     "axios": "^0.19.0",
     "cep-promise": "^3.0.7",
     "electron-is-dev": "^1.1.0",
-    "electron-pdf-window": "^1.0.12",
     "electron-publisher-s3": "^20.17.2",
     "lodash": "^4.17.11",
     "moment": "^2.24.0",
@@ -46,7 +45,7 @@
     "build": "react-scripts build",
     "start": "concurrently \"cross-env BROWSER=none yarn react-scripts start\" \"wait-on http://localhost:3000 && electron .\"",
     "package-win": "electron-builder build --ia32 --x64 --win nsis -c.extraMetadata.main=build/electron.js --publish never",
-    "package-linux": "electron-builder build --linux appimage --x64 -c.extraMetadata.main=build/electron.js --publish never"
+    "package-linux": "electron-builder build --linux appimage -c.extraMetadata.main=build/electron.js --publish never"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -67,7 +66,7 @@
     "concurrently": "^4.1.0",
     "cross-env": "^5.2.0",
     "electron": "^8.0.2",
-    "electron-builder": "^20.41.0",
+    "electron-builder": "^22.8.1",
     "electron-devtools-installer": "^2.2.4",
     "version-bump-prompt": "^5.0.1"
   },

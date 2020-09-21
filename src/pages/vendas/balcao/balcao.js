@@ -644,6 +644,7 @@ export default function BalcaoVendas() {
       code: productInfo.code,
       estoque: productInfo.estoqueAct,
       valueDesconto: 0,
+      sku: productInfo.sku ? productInfo.sku : "",
     };
     await setProductSale([...productSale, info]);
     await setQuantity(1);
@@ -895,6 +896,13 @@ export default function BalcaoVendas() {
       key: "name",
     },
     {
+      title: "SKU",
+      dataIndex: "sku",
+      key: "sku",
+      width: "12%",
+      align: "center",
+    },
+    {
       title: "Preço Uni",
       dataIndex: "valueUnit",
       key: "valueUnit",
@@ -1071,6 +1079,13 @@ export default function BalcaoVendas() {
       key: "codiname",
       width: "58%",
       ellipsis: true,
+    },
+    {
+      title: "SKU",
+      dataIndex: "sku",
+      key: "sku",
+      width: "12%",
+      align: "center",
     },
     {
       title: "Un.",

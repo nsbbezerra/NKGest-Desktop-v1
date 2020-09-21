@@ -26,7 +26,7 @@ export default function IndexFiscal() {
           <Nfe />
         </TabPane>
 
-        <TabPane tab={<span>NFCE</span>} key="2" disabled>
+        <TabPane tab={<span>NFCE</span>} key="2">
           <Nfce />
         </TabPane>
 
