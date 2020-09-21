@@ -114,6 +114,7 @@ export default function BalcaoVendas() {
   const [referenced, setReferenced] = useState("");
   const [handleDocument, setHandleDocument] = useState("");
   const [typeDocument, setTypeDocument] = useState("cpf");
+  const [sku, setSku] = useState("");
 
   useEffect(() => {
     console.log(dateSale);
@@ -205,6 +206,12 @@ export default function BalcaoVendas() {
         return false;
       }
       document.getElementById("barcode").focus();
+    }
+    if (key === "F5") {
+      if (modalHandleProducts === false) {
+        return false;
+      }
+      document.getElementById("sku").focus();
     }
     if (key === "F8") {
       if (modalHandleProducts === false) {
@@ -690,8 +697,28 @@ export default function BalcaoVendas() {
   }, [finderProduct]);
 
   useEffect(() => {
+    finderProductsBySku(sku);
+  }, [sku]);
+
+  useEffect(() => {
     setProductsHandle(products);
   }, [modalHandleProducts]);
+
+  async function finderProductsBySku(text) {
+    if (text === "") {
+      await setProductsHandle(products);
+    } else {
+      let termos = await text.split(" ");
+      let frasesFiltradas = await products.filter((frase) => {
+        return termos.reduce((resultadoAnterior, termoBuscado) => {
+          if (frase.sku) {
+            return resultadoAnterior && frase.sku.includes(termoBuscado);
+          }
+        }, true);
+      });
+      await setProductsHandle(frasesFiltradas);
+    }
+  }
 
   async function finderProductsBySource(text) {
     if (text === "") {
@@ -1923,7 +1950,7 @@ export default function BalcaoVendas() {
                   />
                 </Col>
 
-                <Col span={14}>
+                <Col span={9}>
                   <label>Digite para Buscar o Produto (F8)</label>
                   <Input
                     id="products"
@@ -1931,6 +1958,15 @@ export default function BalcaoVendas() {
                     onChange={(e) =>
                       setFinderProduct(e.target.value.toUpperCase())
                     }
+                  />
+                </Col>
+
+                <Col span={5}>
+                  <label>SKU (F5)</label>
+                  <Input
+                    id="sku"
+                    value={sku}
+                    onChange={(e) => setSku(e.target.value.toUpperCase())}
                   />
                 </Col>
               </Row>

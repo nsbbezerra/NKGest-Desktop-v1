@@ -45,6 +45,7 @@ function Produtos() {
   const [idFornecedor, setIdFornecedor] = useState("");
   const [nomeFornecedor, setNomeFornecedor] = useState("");
   const [codeSku, setCodeSku] = useState("");
+  const [sku, setSku] = useState("");
 
   const [icms, setIcms] = useState(0);
   const [icmsOrigem, setIcmsOrigem] = useState("");
@@ -240,6 +241,7 @@ function Produtos() {
         active: true,
         cfop: cpof,
         ncm: ncm,
+        sku: sku,
         icms: {
           rate: icms,
           csosn: icmsCsosn,
@@ -351,7 +353,7 @@ function Produtos() {
                   />
                 </Col>
 
-                <Col span={5}>
+                <Col span={4}>
                   <label>Código</label>
                   <Input
                     type="text"
@@ -369,12 +371,21 @@ function Produtos() {
                   />
                 </Col>
 
-                <Col span={6}>
-                  <label>Código de Barras</label>
+                <Col span={4}>
+                  <label>Cód. Barras</label>
                   <Input
                     type="text"
                     onChange={(e) => setCodeUniv(e.target.value)}
                     value={codeUniv}
+                  />
+                </Col>
+
+                <Col span={3}>
+                  <label>SKU</label>
+                  <Input
+                    type="text"
+                    onChange={(e) => setSku(e.target.value.toUpperCase())}
+                    value={sku}
                   />
                 </Col>
 

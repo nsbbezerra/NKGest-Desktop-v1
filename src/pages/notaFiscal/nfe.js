@@ -24,6 +24,9 @@ import imcsCsosn from "../../data/pisCst.json";
 import PdfFile from "../../assets/pdf.svg";
 import XmlFile from "../../assets/xml.svg";
 import "../../styles/style.css";
+import Lottie from "react-lottie";
+import animationData from "../../animations/enviando.json";
+import searchData from "../../animations/search.json";
 
 const { Option } = Select;
 const { TreeNode } = TreeSelect;
@@ -1844,6 +1847,24 @@ export default class NotaFiscalNFE extends Component {
       },
     ];
 
+    const defaultOptions = {
+      loop: true,
+      autoplay: true,
+      animationData: animationData,
+      rendererSettings: {
+        preserveAspectRatio: "xMidYMid slice",
+      },
+    };
+
+    const searchOptions = {
+      loop: true,
+      autoplay: true,
+      animationData: searchData,
+      rendererSettings: {
+        preserveAspectRatio: "xMidYMid slice",
+      },
+    };
+
     return (
       <>
         <div
@@ -2512,7 +2533,7 @@ export default class NotaFiscalNFE extends Component {
               flexDirection: "column",
             }}
           >
-            <Icon type="loading" style={{ fontSize: 80 }} />
+            <Lottie options={searchOptions} width={"50%"} />
 
             <p
               style={{
@@ -2543,7 +2564,7 @@ export default class NotaFiscalNFE extends Component {
               flexDirection: "column",
             }}
           >
-            <Icon type="loading" style={{ fontSize: 80 }} />
+            <Lottie options={defaultOptions} width={"90%"} height={"180px"} />
 
             <p
               style={{
@@ -2574,7 +2595,7 @@ export default class NotaFiscalNFE extends Component {
               flexDirection: "column",
             }}
           >
-            <Icon type="loading" style={{ fontSize: 80 }} />
+            <Lottie options={defaultOptions} width={"90%"} height={"180px"} />
 
             <p
               style={{

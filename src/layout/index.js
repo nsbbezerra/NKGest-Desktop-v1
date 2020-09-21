@@ -42,9 +42,9 @@ class Layouts extends Component {
       modalAuth: false,
       stringConnection: "",
       showWarning: false,
-      admin: false, //MUDAR PARA false
-      caixa: false, //MUDAR PARA false
-      sale: false, //MUDAR PARA TRUE
+      admin: true, //MUDAR PARA true
+      caixa: true, //MUDAR PARA true
+      sale: true, //MUDAR PARA TRUE
       loading: false,
       user: "",
       pass: "",
@@ -101,7 +101,7 @@ class Layouts extends Component {
     if (!ipServ && !portServ) {
       this.setState({ modalConnection: true });
     } else {
-      this.setState({ modalAuth: false });
+      this.setState({ modalAuth: true });
       this.setState({ ip: ipServ });
       this.setState({ port: portServ });
     }
@@ -616,11 +616,6 @@ class Layouts extends Component {
                     <Menu.Item key="setting:44">
                       <Link to="/relatoriosEstoque">
                         <Icon type="tags" /> Produtos e Serviços
-                      </Link>
-                    </Menu.Item>
-                    <Menu.Item key="setting:45">
-                      <Link to="/relatorioVendas">
-                        <Icon type="shopping" /> Vendas e Ordens
                       </Link>
                     </Menu.Item>
                   </Menu.ItemGroup>

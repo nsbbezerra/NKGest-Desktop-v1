@@ -30,7 +30,6 @@ import ControleCheques from "../pages/financeiro/cheques/cheques";
 
 import RelatorioCadastros from "../pages/relatorios/cadastros/index";
 import RelatorioFinanceiro from "../pages/relatorios/financeiro/index";
-import RelatorioDeVendas from "../pages/relatorios/vendas/index";
 import RelatorioDosProdutos from "../pages/relatorios/estoque/index";
 
 import EmitNotaFiscal from "../pages/notaFiscal/index";
@@ -93,7 +92,7 @@ export default function Routes() {
 
       <Route path={"/relatoriosCadastro"} component={RelatorioCadastros} />
       <Route path={"/relatoriosFinanceiro"} component={RelatorioFinanceiro} />
-      <Route path={"/relatorioVendas"} component={RelatorioDeVendas} />
+
       <Route path={"/relatoriosEstoque"} component={RelatorioDosProdutos} />
 
       <Route path={"/invoices"} component={EmitNotaFiscal} />

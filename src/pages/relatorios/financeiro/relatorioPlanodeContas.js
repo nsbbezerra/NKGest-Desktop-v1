@@ -11,8 +11,11 @@ import {
   Statistic,
   Spin,
   Descriptions,
+  Switch,
 } from "antd";
 import api from "../../../config/axios";
+import Lottie from "react-lottie";
+import animationData from "../../../animations/printer.json";
 
 const { Option } = Select;
 
@@ -25,7 +28,9 @@ export default function RelatorioPlanodeContas() {
   const [showTables, setShowTables] = useState(false);
   const [relatorioMensal, setRelatorioMensal] = useState({});
   const [modalAdvancedFind, setModalAdvancedFind] = useState(false);
-  const [dados, setDados] = useState({});
+  const [loadingPrinter, setLoadingPrinter] = useState(false);
+  const [idToPrint, setIdToPrint] = useState("");
+  const [useSaldo, setUseSaldo] = useState(false);
 
   function erro(title, message) {
     Modal.error({
@@ -39,6 +44,19 @@ export default function RelatorioPlanodeContas() {
     });
   }
 
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: animationData,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice",
+    },
+  };
+
+  useEffect(() => {
+    console.log(useSaldo);
+  }, [useSaldo]);
+
   function warning(title, message) {
     Modal.warning({
       title: title,
@@ -49,17 +67,6 @@ export default function RelatorioPlanodeContas() {
       ),
       onOk() {},
     });
-  }
-
-  async function findDados() {
-    await api
-      .get("/organization/find")
-      .then((response) => {
-        setDados(response.data.empresa);
-      })
-      .catch((error) => {
-        erro("Erro", error.message);
-      });
   }
 
   async function findMesGerado() {
@@ -82,9 +89,11 @@ export default function RelatorioPlanodeContas() {
       .post("/report/createBalancete", {
         mes: mes,
         ano: ano,
+        useSaldo: useSaldo,
       })
       .then((response) => {
         setRelatorioMensal(response.data.relatorioMensal);
+        setIdToPrint(response.data.relatorioMensal._id);
         setLoading(false);
         setShowTables(true);
         setModalAdvancedFind(false);
@@ -97,7 +106,6 @@ export default function RelatorioPlanodeContas() {
 
   useEffect(() => {
     findMesGerado();
-    findDados();
   }, []);
 
   function handleBalancete() {
@@ -112,415 +120,31 @@ export default function RelatorioPlanodeContas() {
     setModalAdvancedFind(true);
   }
 
-  function printer() {
-    var mywindow = window.open(
-      "",
-      "Print",
-      `height=${window.screen.height}, width=${window.screen.width}`,
-      "fullscreen=yes"
+  function printer(url) {
+    window.open(
+      url,
+      "pdfSale",
+      `height=${window.screen.height}, width=${window.screen.width}`
     );
-    mywindow.document.write(`
-        <!DOCTYPE html>
-        <html>
-        
-        <head>
-          <title>Imprimir Relatório Financeiro</title>
-          <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <style type="text/css">
-            * {
-              margin: 0;
-              padding: 0;
-              outline: none;
-              box-sizing: border-box;
-              font-family: Arial, Helvetica, sans-serif;
-            }
-        
-            html {
-              background-color: #777;
-              width: 100%;
-            }
-        
-            body {
-              width: 100%;
-              height: 100%;
-              padding: 10px;
-            }
-        
-            html::-webkit-scrollbar {
-              display: none;
-            }
-        
-            .page {
-              background-color: #fff;
-              width: 80vw;
-              height: 100% !important;
-              box-shadow: 1px 1px 6px rgba(0, 0, 0, .6);
-              padding: 15px;
-              overflow: auto;
-              position: relative;
-              margin: auto;
-              min-height: 297mm;
-            }
-        
-            .content {
-              display: block;
-              position: relative;
-            }
-        
-            .header-page {
-              width: 100% !important;
-              height: 110px;
-              display: flex;
-              flex-direction: row;
-              justify-content: space-between;
-              align-items: center;
-              max-height: 110px;
-              min-height: 110px;
-            }
-        
-            .logo {
-              width: 110px;
-              height: 110px;
-              padding: 5px;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-            }
-        
-            .company-info {
-              width: 100%;
-              display: flex;
-              flex-direction: row;
-              justify-content: space-between;
-              border: 1px solid #000;
-              height: 109.5px;
-              border-radius: 5px;
-            }
-        
-            .company-info-container {
-              width: 100%;
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              padding: 10px;
-            }
-        
-            .company-info-container h5 {
-              font-size: 30px;
-            }
-        
-            .company-info-container p {
-              width: 100%;
-              font-size: 15px;
-              text-align: center;
-            }
-        
-            .info-container {
-              width: 100%;
-              height: 48%;
-              border: 1px solid #000;
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              justify-content: center !important;
-              border-radius: 5px;
-            }
-        
-            .info-container h6 {
-              margin-bottom: 5px;
-              font-weight: bold;
-            }
-        
-            .info-container p {
-              font-size: 15px;
-              font-style: italic;
-            }
-        
-            .content h2 {
-              width: 100%;
-              text-align: center;
-              margin-top: 10px;
-            }
-        
-            .table-product {
-              width: 100%;
-              border: 1px solid #000;
-              border-radius: 5px;
-              overflow: hidden;
-            }
-        
-            .table-product thead tr td {
-              padding: 5px;
-              font-weight: bold;
-              font-size: 13px;
-              border-bottom: 1px solid #000;
-              border-right: 1px solid #000;
-            }
-        
-            .table-product thead tr td:last-child {
-              border-right: none;
-            }
-        
-            .table-product tbody tr td {
-              padding: 5px;
-              font-size: 12px;
-              border-right: 1px solid #000;
-            }
-        
-            .table-product tbody tr td:last-child {
-              border-right: none;
-            }
-        
-            .desc,
-            .desc2 {
-              width: 85%;
-            }
-        
-            .price,
-            .price2 {
-              width: 15%;
-              text-align: right;
-            }
-        
-            .table-resume {
-              width: 100%;
-              border: 1px solid #000;
-              border-radius: 5px;
-              overflow: hidden;
-              margin-top: 30px;
-            }
-        
-            .values {
-              width: 80%;
-              padding: 5px;
-              border-right: 1px solid #000;
-              font-weight: bold;
-              border-bottom: 1px solid #000;
-            }
-        
-            .money {
-              padding: 5px;
-              text-align: right;
-              border-bottom: 1px solid #000;
-            }
-        
-            .valueslast {
-              width: 80%;
-              padding: 5px;
-              border-right: 1px solid #000;
-              font-weight: bold;
-            }
-        
-            .moneylast {
-              padding: 5px;
-              text-align: right;
-            }
-        
-            .page-break {
-              display: none;
-            }
-        
-            .cabecalho {
-              width: 100%;
-              text-align: center;
-              padding: 5px;
-              font-weight: bold;
-              font-style: italic;
-              margin-top: 15px;
-              margin-bottom: 10px;
-              background: lightgray;
-              border-radius: 5px;
-            }
-        
-            .btn-print {
-              border: none;
-              padding: 10px;
-              border-radius: 4px;
-              font-weight: 700;
-              position: fixed;
-              top: 7px;
-              left: 7px;
-              cursor: pointer;
-              z-index: 1000;
-              box-shadow: 1px 1px 4px rgba(0, 0, 0, .6);
-              background-color: white;
-          }
-        
-            @media print {
-        
-              .btn-print {
-                display: none;
-              }
+  }
 
-              .page {
-                visibility: hidden;
-                margin: 0;
-                padding: 0;
-                width: 100%;
-              }
-        
-              .content {
-                display: block;
-                visibility: visible;
-                position: relative;
-                width: 100%;
-              }
-        
-              .company-info-container h5 {
-                font-size: 25px;
-              }
-        
-              .company-info-container p {
-                font-size: 12px;
-              }
-        
-              .header-page,
-              .logo,
-              .order-info {
-                max-height: 100px;
-              }
-        
-              .info-container p {
-                font-size: 11px;
-              }
-        
-              .table-product tbody tr td {
-                font-size: 11px;
-              }
-        
-              .table-product thead tr td {
-                font-size: 12px;
-              }
-              
-              .page-break {
-                display: block;
-                page-break-after: always;
-                break-inside: avoid;
-                color: transparent;
-              }
-        
-              @page {
-                margin: .6cm;
-              }
-        
-            }
-          </style>
-        </head>
-        
-        <body>
-        
-          <div class="page">
-
-          <button class="btn-print" onclick="window.print()">IMPRIMIR</button>
-        
-            <div class="content">
-        
-              <div class="header-page">
-        
-                <section class="company-info">
-        
-                  <div class="logo">
-                    <img src="${
-                      dados.logo_url
-                    }" style="width: 100px; max-height: 100px;"/>
-                  </div>
-        
-                  <div class="company-info-container">
-        
-                    <h5>${dados.name}</h5>
-                    <p>${dados.street}, ${dados.number}, ${dados.bairro}, ${
-      dados.city
-    } - ${dados.state}, CEP: ${dados.cep}.</p>
-                    <p>CNPJ: ${dados.cnpj}, Fone ${dados.phoneComercial}</p>
-                    <p>Email: ${dados.email}</p>
-                  </div>
-        
-                </section>
-        
-              </div>
-        
-              <h2>RELATÓRIO FINANCEIRO DO MES DE: ${mes} DE ${ano}</h2>
-        
-              <div class="cabecalho">
-                <p>ENTRADAS</p>
-              </div>
-        
-              <table class="table-product" cellspacing='0'>
-                <thead>
-                  <tr>
-                    <td class="desc">DESCRIÇÃO</td>
-                    <td class="price">VALOR</td>
-                  </tr>
-                </thead>
-                <tbody>
-                    ${relatorioMensal.receives
-                      .map((rec) => {
-                        return `<tr>
-                        <td class="desc2">${rec.description}</td>
-                        <td class="price2">R$ ${rec.value}</td>
-                      </tr>`;
-                      })
-                      .join("")}
-                </tbody>
-              </table>
-        
-              <div class="cabecalho">
-                <p>SAÍDAS</p>
-              </div>
-        
-              <table class="table-product" cellspacing='0'>
-                <thead>
-                  <tr>
-                    <td class="desc">DESCRIÇÃO</td>
-                    <td class="price">VALOR</td>
-                  </tr>
-                </thead>
-                <tbody>
-                 ${relatorioMensal.withdraw
-                   .map((wit) => {
-                     return `<tr>
-                    <td class="desc2">${wit.description}</td>
-                    <td class="price2">R$ ${wit.value}</td>
-                  </tr>`;
-                   })
-                   .join("")}
-                </tbody>
-              </table>
-        
-              <table class="table-resume">
-        
-                <thead>
-                  <tr>
-                    <td class="values">SALDO ANTERIOR</td>
-                    <td class="money">R$ ${relatorioMensal.saldoAnterior}</td>
-                  </tr>
-                  <tr>
-                    <td class="values">TOTAL DAS ENTRADAS</td>
-                    <td class="money">R$ ${relatorioMensal.entradas}</td>
-                  </tr>
-                  <tr>
-                    <td class="values">TOTAL DAS SAÍDAS</td>
-                    <td class="money">R$ ${relatorioMensal.saidas}</td>
-                  </tr>
-                  <tr>
-                    <td class="valueslast">SALDO ATUAL</td>
-                    <td class="moneylast">R$ ${relatorioMensal.saldoAtual}</td>
-                  </tr>
-                </thead>
-        
-              </table>
-        
-            </div>
-        
-          </div>
-        
-        </body>
-        
-        <p class="page-break">PageBreak</p>
-        
-        </html>
-        `);
+  async function generatePrint() {
+    setLoadingPrinter(true);
+    await api
+      .post("/printerRelatorio/balancete", { id: idToPrint })
+      .then((response) => {
+        setLoadingPrinter(false);
+        let link = response.data.link;
+        printer(link);
+      })
+      .catch((error) => {
+        setLoadingPrinter(false);
+        if (error.response.data.message) {
+          erro("Erro", error.response.data.message);
+        } else {
+          erro("Erro", "Ocorreu um erro ao gerar o relatório");
+        }
+      });
   }
 
   const columns = [
@@ -584,6 +208,13 @@ export default function RelatorioPlanodeContas() {
                 alignItems: "center",
               }}
             >
+              <div style={{ marginRight: 10 }}>
+                <label style={{ marginRight: 10 }}>Usar Saldo Anterior?</label>
+                <Switch
+                  defaultChecked={useSaldo}
+                  onChange={(value) => setUseSaldo(value)}
+                />
+              </div>
               <Select
                 value={mes}
                 style={{ width: 150, marginRight: 10 }}
@@ -651,7 +282,7 @@ export default function RelatorioPlanodeContas() {
                   icon="printer"
                   type="primary"
                   style={{ marginRight: 10 }}
-                  onClick={() => printer()}
+                  onClick={() => generatePrint()}
                 >
                   Imprimir Relatório
                 </Button>
@@ -841,6 +472,37 @@ export default function RelatorioPlanodeContas() {
           >
             Período a ser gerado: <strong>{`${mes} de ${ano}`}</strong>
           </p>
+        </Modal>
+
+        <Modal
+          visible={loadingPrinter}
+          closable={false}
+          title={false}
+          footer={false}
+          centered
+        >
+          <div
+            style={{
+              display: "flex",
+              width: "100%",
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "column",
+            }}
+          >
+            <Lottie options={defaultOptions} width={"50%"} />
+
+            <p
+              style={{
+                marginTop: 30,
+                fontSize: 25,
+                fontWeight: "bold",
+                marginBottom: -10,
+              }}
+            >
+              Gerando Relatório
+            </p>
+          </div>
         </Modal>
       </Spin>
     </div>

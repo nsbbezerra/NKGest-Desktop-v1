@@ -91,6 +91,7 @@ export default class GerenciaProdutos extends Component {
       ipiCst: "",
       ipiRate: 0,
       ipiCode: "",
+      sku: "",
     };
   }
 
@@ -271,6 +272,7 @@ export default class GerenciaProdutos extends Component {
     this.setState({ valueDiversos: result.valueDiversos });
     this.setState({ otherExpensesRef: result.valueDiversos });
     this.setState({ valueSale: result.valueSale });
+    this.setState({ sku: result.sku ? result.sku : "" });
     this.setState({
       valorTotalProdutos:
         (result.valueCusto + result.valueDiversos + result.frete) *
@@ -463,6 +465,7 @@ export default class GerenciaProdutos extends Component {
         valueDiversos: this.state.valueDiversos,
         valueSale: this.state.valueSale,
         estoqueAct: this.state.newEstoque,
+        sku: this.state.sku,
         icms: {
           rate: this.state.icms,
           origin: this.state.icmsOrigem,
@@ -1219,12 +1222,22 @@ export default class GerenciaProdutos extends Component {
               />
             </Col>
 
-            <Col span={6}>
+            <Col span={5}>
               <label>Código</label>
               <Input value={this.state.codeSku} readOnly />
             </Col>
 
-            <Col span={7}>
+            <Col span={3}>
+              <label>SKU</label>
+              <Input
+                value={this.state.sku}
+                onChange={(e) =>
+                  this.setState({ sku: e.target.value.toUpperCase() })
+                }
+              />
+            </Col>
+
+            <Col span={5}>
               <label>Código de Barras</label>
               <Input
                 value={this.state.codeUniversal}
