@@ -3,6 +3,7 @@ const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 const path = require("path");
 const isDev = require("electron-is-dev");
+const PDFWindow = require("electron-pdf-window");
 let mainWindow;
 const Menu = electron.Menu;
 
@@ -13,15 +14,14 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1340,
     height: 700,
-    hasShadow: true,
     webPreferences: {
       nativeWindowOpen: true,
       nodeIntegration: true,
       plugins: true,
     },
     icon: iconPath,
-    frame: false,
-    transparent: true,
+    frame: true,
+    transparent: false,
     resizable: true,
   });
   mainWindow.loadURL(
@@ -39,7 +39,13 @@ function createWindow() {
       }
       if (frameName === "pdfSale") {
         event.preventDefault();
-        electron.shell.openExternal(url);
+        const width = options.width;
+        const height = options.height;
+        const win = new PDFWindow({
+          width: width,
+          height: height,
+        });
+        win.loadURL(url);
       }
     }
   );

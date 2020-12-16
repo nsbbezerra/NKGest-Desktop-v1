@@ -10,7 +10,6 @@ import {
   Avatar,
   Row,
   Col,
-  Tooltip,
   PageHeader,
   Divider,
 } from "antd";
@@ -31,13 +30,11 @@ import logoNkgest from "../assets/logo.png";
 const { Content, Header, Sider } = Layout;
 const { SubMenu } = Menu;
 
-const remote = window.require("electron").remote;
-
 class Layouts extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      collapse: true,
+      collapse: false,
       modalConnection: false,
       modalAuth: false,
       stringConnection: "",
@@ -163,38 +160,6 @@ class Layouts extends Component {
       });
   };
 
-  handleMaximize = () => {
-    const window = remote.getCurrentWindow();
-
-    const { width: currentWidth, height: currentHeight } = window.getBounds();
-
-    const {
-      width: maxWidth,
-      height: maxHeight,
-    } = remote.screen.getPrimaryDisplay().workAreaSize;
-
-    const isMaximized =
-      currentWidth === maxWidth && currentHeight === maxHeight;
-
-    if (!isMaximized) {
-      window.maximize();
-      this.setState({ maximized: true });
-    } else {
-      window.unmaximize();
-      this.setState({ maximized: false });
-    }
-  };
-
-  handleMinimize = () => {
-    const window = remote.getCurrentWindow();
-    window.minimize();
-  };
-
-  handleClose = () => {
-    const window = remote.getCurrentWindow();
-    window.close();
-  };
-
   render() {
     const menu = (
       <Menu>
@@ -278,42 +243,6 @@ class Layouts extends Component {
                   </div>,
                 ]}
               />
-              <div className="btn-app-container">
-                <Tooltip title="Minimizar">
-                  <button
-                    className="btn-header btn-blue"
-                    onClick={() => this.handleMinimize()}
-                  >
-                    <Icon type="minus" />
-                  </button>
-                </Tooltip>
-                <Tooltip
-                  title={
-                    this.state.maximized === true
-                      ? "Redimensionar"
-                      : "Maximizar"
-                  }
-                >
-                  <button
-                    className="btn-header btn-blue"
-                    onClick={() => this.handleMaximize()}
-                  >
-                    {this.state.maximized === true ? (
-                      <Icon type="shrink" />
-                    ) : (
-                      <Icon type="arrows-alt" />
-                    )}
-                  </button>
-                </Tooltip>
-                <Tooltip title="Fechar">
-                  <button
-                    className="btn-header btn-red"
-                    onClick={() => this.handleClose()}
-                  >
-                    <Icon type="close" />
-                  </button>
-                </Tooltip>
-              </div>
             </Header>
           </div>
 

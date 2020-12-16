@@ -3,6 +3,7 @@ import "./style.css";
 import { Button, Divider, Radio, Modal } from "antd";
 import Matri from "../assets/print.svg";
 import Norm from "../assets/printer.svg";
+import Therm from "../assets/thermal.svg";
 import Lottie from "react-lottie";
 import animationData from "../animations/printer.json";
 import api from "../config/axios";
@@ -119,6 +120,20 @@ function PrintOrderTemplate({ id }) {
             >
               <img src={Norm} style={{ width: 70, height: 70 }} />
               Normal
+            </div>
+          </Radio.Button>
+          <Radio.Button value="thermal" style={{ height: 100 }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: 5,
+              }}
+            >
+              <img src={Therm} style={{ width: 70, height: 70 }} />
+              Termal
             </div>
           </Radio.Button>
         </Radio.Group>
