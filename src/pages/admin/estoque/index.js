@@ -45,6 +45,7 @@ export default function IndexAdminProducts() {
             </span>
           }
           key="2"
+          disabled
         >
           <ProdutosXml />
         </TabPane>

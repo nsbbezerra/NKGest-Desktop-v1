@@ -165,6 +165,12 @@ export default class NotaFiscalNFE extends Component {
       pis_aliquota_porcentual: 0,
       cofins_aliquota_porcentual: 0,
       ipi_codigo_enquadramento_legal: "",
+
+      icms_valor: 0,
+      icms_modalidade_base_calculo: "",
+      icms_base_calculo_st: 0,
+      icms_base_calculo: 0,
+      icms_valor_st: 0,
     };
   }
 
@@ -1111,6 +1117,13 @@ export default class NotaFiscalNFE extends Component {
     if (result.cest) {
       this.setState({ cest: result.cest });
     }
+    this.setState({ icms_valor: result.icms_valor });
+    this.setState({
+      icms_modalidade_base_calculo: result.icms_modalidade_base_calculo,
+    });
+    this.setState({ icms_base_calculo_st: result.icms_base_calculo_st });
+    this.setState({ icms_base_calculo: result.icms_base_calculo });
+    this.setState({ icms_valor_st: result.icms_valor_st });
     this.setState({ modalEditProduct: true });
   };
 
@@ -3491,6 +3504,65 @@ export default class NotaFiscalNFE extends Component {
                 <Option value={"4"}>Margem Valor Agregado (%)</Option>
                 <Option value={"5"}>Pauta (valor)</Option>
               </Select>
+            </Col>
+          </Row>
+          <Row gutter={10}>
+            <Col span={5}>
+              <label>Icms Mod. Base de Cálculo</label>
+              <Select
+                value={this.state.icms_modalidade_base_calculo}
+                style={{ width: "100%", marginBottom: 10 }}
+                onChange={(value) =>
+                  this.setState({ icms_modalidade_base_calculo: value })
+                }
+              >
+                <Option value={"0"}>Margem Valor Agregado (%)</Option>
+                <Option value={"1"}>Pauta (Valor)</Option>
+                <Option value={"2"}>Preço Tabelado Máximo (valor)</Option>
+                <Option value={"3"}>Valor da Operação</Option>
+              </Select>
+            </Col>
+            <Col span={5}>
+              <label>Valor do ICMS</label>
+              <Input
+                type="number"
+                addonAfter="%"
+                value={this.state.icms_valor}
+                onChange={(e) => this.setState({ icms_valor: e.target.value })}
+              />
+            </Col>
+            <Col span={5}>
+              <label>Valor do ICMS ST</label>
+              <Input
+                type="number"
+                addonAfter="%"
+                value={this.state.icms_valor_st}
+                onChange={(e) =>
+                  this.setState({ icms_valor_st: e.target.value })
+                }
+              />
+            </Col>
+            <Col span={5}>
+              <label>IMCS Base Cálculo</label>
+              <Input
+                type="number"
+                addonAfter="%"
+                value={this.state.icms_base_calculo}
+                onChange={(e) =>
+                  this.setState({ icms_base_calculo: e.target.value })
+                }
+              />
+            </Col>
+            <Col span={4}>
+              <label>IMCS Base Cálculo ST</label>
+              <Input
+                type="number"
+                addonAfter="%"
+                value={this.state.icms_base_calculo_st}
+                onChange={(e) =>
+                  this.setState({ icms_base_calculo_st: e.target.value })
+                }
+              />
             </Col>
           </Row>
           <Row gutter={10} style={{ marginBottom: 7 }}>

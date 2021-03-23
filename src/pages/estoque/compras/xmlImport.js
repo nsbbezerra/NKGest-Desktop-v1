@@ -125,6 +125,7 @@ function XmlImporter() {
     await api
       .post("/xmlImport/importXml", data)
       .then((response) => {
+        console.log(response);
         success("Sucesso", "Dados carregados com sucesso");
         setFornecedorId(response.data.fornecer._id);
         setFornecedorName(response.data.fornecer.socialName);

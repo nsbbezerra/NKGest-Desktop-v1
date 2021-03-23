@@ -74,7 +74,7 @@ export default class GerenciaProdutos extends Component {
       fcpRate: 0,
       fcpRetRate: 0,
       fcpSTRate: 0,
-      modeCalc: "",
+      modeCalc: "margemBruta",
       markupFactor: 0,
       margemLiquida: 0,
       valorTotalProdutos: 0,
@@ -92,6 +92,11 @@ export default class GerenciaProdutos extends Component {
       ipiRate: 0,
       ipiCode: "",
       sku: "",
+      icmsValue: 0,
+      icmsValueSt: 0,
+      icmsBaseCalc: 0,
+      icmsBaseCalcSt: 0,
+      icmsModBC: "",
     };
   }
 
@@ -236,6 +241,7 @@ export default class GerenciaProdutos extends Component {
     await api
       .get("/admin/findProducts")
       .then((response) => {
+        console.log(response);
         this.setState({ products: response.data.products });
         this.setState({ spinner: false });
       })
@@ -310,6 +316,24 @@ export default class GerenciaProdutos extends Component {
       ? this.setState({ fcpRetRate: result.icms.fcpRetRate })
       : this.setState({ fcpRetRate: 0 });
 
+    this.setState({
+      icmsValue: !result.icms.icmsValue ? 0 : result.icms.icmsValue,
+    });
+    this.setState({
+      icmsValueSt: !result.icms.icmsValueSt ? 0 : result.icms.icmsValueSt,
+    });
+    this.setState({
+      icmsBaseCalc: !result.icms.icmsBaseCalc ? 0 : result.icms.icmsBaseCalc,
+    });
+    this.setState({
+      icmsBaseCalcSt: !result.icms.icmsBaseCalcSt
+        ? 0
+        : result.icms.icmsBaseCalcSt,
+    });
+    this.setState({
+      icmsModBC: !result.icms.icmsModBC ? "" : result.icms.icmsModBC,
+    });
+
     let rateIcmsSt;
     let rateFcp;
     let rateFcpRet;
@@ -380,42 +404,21 @@ export default class GerenciaProdutos extends Component {
   };
 
   calculatePriceForSale = async () => {
-    let calcIcms;
-    let calcPis;
-    let calcCofins;
-    let calcFcp;
-    let calcFcpSt;
-    let calcFcpRet;
-    let calcIcmsSt;
-    let totalPrice =
-      this.state.valueCusto + this.state.valueDiversos + this.state.frete;
-    calcIcms = this.state.icms > 0 ? (this.state.icms / 100) * totalPrice : 0;
-    calcPis = this.state.pis > 0 ? (this.state.pis / 100) * totalPrice : 0;
-    calcCofins =
-      this.state.cofins > 0 ? (this.state.cofins / 100) * totalPrice : 0;
-    calcFcp =
-      this.state.fcpRate > 0 ? (this.state.fcpRate / 100) * totalPrice : 0;
-    calcFcpSt =
-      this.state.fcpSTRate > 0 ? (this.state.fcpSTRate / 100) * totalPrice : 0;
-    calcFcpRet =
-      this.state.fcpRetRate > 0
-        ? (this.state.fcpRetRate / 100) * totalPrice
-        : 0;
-    calcIcmsSt =
-      this.state.icmsSTRate > 0
-        ? (this.state.icmsSTRate / 100) * totalPrice
-        : 0;
-    let finalPrice =
-      (await totalPrice) +
-      calcIcms +
-      calcPis +
-      calcCofins +
-      calcFcp +
-      calcFcpSt +
-      calcFcpRet +
-      calcIcmsSt;
-    let calcFinal = (await finalPrice) * this.state.margeLucroValue;
+    let final = this.state.valueCusto + this.state.valueDiversos;
+    let calcFinal = final * this.state.margeLucroValue;
     let calcConverted = parseFloat(calcFinal.toFixed(2));
+    console.log(calcConverted);
+    if (this.state.icmsBaseCalcSt > 0) {
+      if (calcConverted > this.state.icmsBaseCalcSt) {
+        this.erro(
+          "Erro",
+          `O Preço de Venda não pode ultrapassar o valor determinado, pois este produto possui Substituição Tributária, o Preço Máximo permitido é de: ${parseFloat(
+            this.state.icmsBaseCalcSt
+          ).toLocaleString("pt-br", { style: "currency", currency: "BRL" })}`
+        );
+        return false;
+      }
+    }
     await this.setState({ valueSale: calcConverted });
   };
 
@@ -479,6 +482,11 @@ export default class GerenciaProdutos extends Component {
           ipiCst: this.state.ipiCst,
           ipiRate: this.state.ipiRate,
           ipiCode: this.state.ipiCode,
+          icmsValue: this.state.icmsValue,
+          icmsValueSt: this.state.icmsValueSt,
+          icmsBaseCalc: this.state.icmsBaseCalc,
+          icmsBaseCalcSt: this.state.icmsBaseCalcSt,
+          icmsModBC: this.state.icmsModBC,
         },
         pis: {
           rate: this.state.pis,
@@ -554,25 +562,6 @@ export default class GerenciaProdutos extends Component {
     );
     await this.setState({ margeLucro: result.text });
     await this.setState({ margeLucroValue: result.value });
-  };
-
-  calculatePriceForSaleMarkup = () => {
-    let Ctv =
-      parseFloat(this.state.icmsAliqTotal) +
-      parseFloat(this.state.pisAndCofins) +
-      parseFloat(this.state.comission) +
-      parseFloat(this.state.adminExpenses) +
-      parseFloat(this.state.margemLiquida) +
-      parseFloat(this.state.ipiRate);
-    let valorCusto =
-      parseFloat(this.state.valueCusto) +
-      parseFloat(this.state.frete) +
-      parseFloat(this.state.valueDiversos);
-    let mkd = (100 - Ctv) / 100;
-    let valorVenda = valorCusto / mkd;
-    let valorConverted = parseFloat(valorVenda.toFixed(2));
-    this.setState({ markupFactor: mkd });
-    this.setState({ valueSale: valorConverted });
   };
 
   render() {
@@ -1472,6 +1461,65 @@ export default class GerenciaProdutos extends Component {
                     />
                   </Col>
                 </Row>
+                <Row gutter={10}>
+                  <Col span={5}>
+                    <label>Icms Mod. Base de Cálculo</label>
+                    <Select
+                      value={this.state.icmsModBC}
+                      style={{ width: "100%", marginBottom: 10 }}
+                      onChange={(value) => this.setState({ icmsModBC: value })}
+                    >
+                      <Option value={"0"}>Margem Valor Agregado (%)</Option>
+                      <Option value={"1"}>Pauta (Valor)</Option>
+                      <Option value={"2"}>Preço Tabelado Máximo (valor)</Option>
+                      <Option value={"3"}>Valor da Operação</Option>
+                    </Select>
+                  </Col>
+                  <Col span={5}>
+                    <label>Valor do ICMS</label>
+                    <Input
+                      type="number"
+                      addonAfter="%"
+                      value={this.state.icmsValue}
+                      onChange={(e) =>
+                        this.setState({ icmsValue: e.target.value })
+                      }
+                    />
+                  </Col>
+                  <Col span={5}>
+                    <label>Valor do ICMS ST</label>
+                    <Input
+                      type="number"
+                      addonAfter="%"
+                      value={this.state.icmsValueSt}
+                      onChange={(e) =>
+                        this.setState({ icmsValueSt: e.target.value })
+                      }
+                    />
+                  </Col>
+                  <Col span={5}>
+                    <label>IMCS Base Cálculo</label>
+                    <Input
+                      type="number"
+                      addonAfter="%"
+                      value={this.state.icmsBaseCalc}
+                      onChange={(e) =>
+                        this.setState({ icmsBaseCalc: e.target.value })
+                      }
+                    />
+                  </Col>
+                  <Col span={4}>
+                    <label>IMCS Base Cálculo ST</label>
+                    <Input
+                      type="number"
+                      addonAfter="%"
+                      value={this.state.icmsBaseCalcSt}
+                      onChange={(e) =>
+                        this.setState({ icmsBaseCalcSt: e.target.value })
+                      }
+                    />
+                  </Col>
+                </Row>
               </Card>
             </Col>
           </Row>
@@ -1709,303 +1757,115 @@ export default class GerenciaProdutos extends Component {
             style={{ marginTop: 10 }}
             headStyle={{ fontWeight: "bold", backgroundColor: "#f8f8f8" }}
             size="small"
-            extra={
-              <Radio.Group
-                onChange={(e) => this.setState({ modeCalc: e.target.value })}
-                buttonStyle="solid"
-                value={this.state.modeCalc}
-              >
-                <Radio.Button value={"markup"}>Markup</Radio.Button>
-                <Radio.Button value={"margemBruta"}>Margem Bruta</Radio.Button>
-              </Radio.Group>
-            }
           >
-            {this.state.modeCalc === "" && (
-              <label>
-                Escolha um fator de cálculo de preço de vendas acima.
-              </label>
-            )}
-
-            {this.state.modeCalc === "margemBruta" && (
-              <>
-                <Row gutter={10} style={{ marginBottom: 7 }}>
-                  <Col span={12}>
-                    <label>
-                      Selecione a Margem de Lucro
-                      <span style={{ color: "red" }}>*</span>
-                    </label>
-                    <TreeSelect
-                      showSearch
-                      style={{ width: "100%" }}
-                      dropdownStyle={{ maxHeight: 150, overflow: "auto" }}
-                      value={this.state.margeLucro}
-                      treeDefaultExpandAll
-                      onChange={(value) => this.handleMarge(value)}
-                      size="large"
-                    >
-                      {this.state.margeLucroData.map((marge) => (
-                        <TreeNode
-                          value={marge.text}
-                          title={marge.text}
-                          key={marge.value}
-                        />
-                      ))}
-                    </TreeSelect>
-                  </Col>
-                  <Col span={12}>
-                    <label style={{ color: "transparent" }}>
-                      Nova Quantidade
-                    </label>
-                    <Button
-                      icon="calculator"
-                      type="primary"
-                      size="large"
-                      style={{ width: "100%" }}
-                      onClick={() => this.calculatePriceForSale()}
-                    >
-                      CALCULAR PREÇO DE VENDA
-                    </Button>
-                  </Col>
-                </Row>
-                <Divider style={{ fontSize: 15, fontWeight: "bold" }}>
-                  RESULTADO
-                </Divider>
-                <Row gutter={10}>
-                  <Col span={4}>
-                    <label>Valor Unitário</label>
-                    <Input
-                      type="number"
-                      addonAfter="R$"
-                      value={this.state.valueCusto}
-                      onChange={(e) =>
-                        this.setState({
-                          valueCusto: parseFloat(e.target.value),
-                        })
-                      }
-                      size="large"
-                    />
-                  </Col>
-                  <Col span={4}>
-                    <label>Valores Diversos</label>
-                    <Input
-                      type="number"
-                      addonAfter="R$"
-                      value={this.state.valueDiversos}
-                      onChange={(e) =>
-                        this.setState({
-                          valueDiversos: parseFloat(e.target.value),
-                        })
-                      }
-                      size="large"
-                    />
-                  </Col>
-                  <Col span={4}>
-                    <label>Frete</label>
-                    <Input
-                      type="number"
-                      addonAfter="R$"
-                      value={this.state.frete}
-                      onChange={(e) =>
-                        this.setState({ frete: parseFloat(e.target.value) })
-                      }
-                      size="large"
-                    />
-                  </Col>
-                  <Col span={6}>
-                    <label>Valor de Custo - Somatório dos Itens</label>
-                    <Input
-                      type="number"
-                      addonAfter="R$"
-                      value={this.state.valorTotalProdutos}
-                      readOnly
-                      size="large"
-                    />
-                  </Col>
-                  <Col span={6}>
-                    <label>Valor de Venda</label>
-                    <Input
-                      type="number"
-                      addonAfter="R$"
-                      value={this.state.valueSale}
-                      onChange={(e) =>
-                        this.setState({ valueSale: parseFloat(e.target.value) })
-                      }
-                      size="large"
-                    />
-                  </Col>
-                </Row>
-              </>
-            )}
-
-            {this.state.modeCalc === "markup" && (
-              <>
-                <Row gutter={10} style={{ marginBottom: 7 }}>
-                  <Col span={4}>
-                    <label>ICMS</label>
-                    <Input
-                      value={this.state.icms}
-                      readOnly
-                      addonAfter="%"
-                      size="large"
-                    />
-                  </Col>
-                  <Col span={4}>
-                    <label>PIS + COFINS</label>
-                    <Input
-                      value={this.state.pisAndCofins}
-                      readOnly
-                      addonAfter="%"
-                      size="large"
-                    />
-                  </Col>
-                  <Col span={4}>
-                    <label>IPI</label>
-                    <Input
-                      type="number"
-                      value={this.state.ipiRate}
-                      readOnly
-                      addonAfter="%"
-                      size="large"
-                    />
-                  </Col>
-                  <Col span={4}>
-                    <label>
-                      Comissão<span style={{ color: "red" }}>*</span>
-                    </label>
-                    <Input
-                      type="number"
-                      value={this.state.comission}
-                      onChange={(e) =>
-                        this.setState({ comission: e.target.value })
-                      }
-                      addonAfter="%"
-                      size="large"
-                    />
-                  </Col>
-                  <Col span={4}>
-                    <label>
-                      Despesas Administrativas
-                      <span style={{ color: "red" }}>*</span>
-                    </label>
-                    <Input
-                      type="number"
-                      value={this.state.adminExpenses}
-                      onChange={(e) =>
-                        this.setState({ adminExpenses: e.target.value })
-                      }
-                      addonAfter="%"
-                      size="large"
-                    />
-                  </Col>
-                  <Col span={4}>
-                    <label>
-                      Margem Desejada (Líquida)
-                      <span style={{ color: "red" }}>*</span>
-                    </label>
-                    <Input
-                      type="number"
-                      value={this.state.margemLiquida}
-                      onChange={(e) =>
-                        this.setState({ margemLiquida: e.target.value })
-                      }
-                      addonAfter="%"
-                      size="large"
-                    />
-                  </Col>
-                </Row>
-                <Row gutter={10} style={{ marginBottom: 7 }}>
-                  <Col span={12}>
-                    <label>Fator Markup Divisor</label>
-                    <Input
-                      value={this.state.markupFactor}
-                      readOnly
-                      size="large"
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <label style={{ color: "transparent" }}>
-                      Nova Quantidade
-                    </label>
-                    <Button
-                      icon="calculator"
-                      type="primary"
-                      size="large"
-                      style={{ width: "100%" }}
-                      onClick={() => this.calculatePriceForSaleMarkup()}
-                    >
-                      CALCULAR PREÇO DE VENDA
-                    </Button>
-                  </Col>
-                </Row>
-                <Divider style={{ fontSize: 15, fontWeight: "bold" }}>
-                  RESULTADO
-                </Divider>
-                <Row gutter={10}>
-                  <Col span={4}>
-                    <label>Valor Unitário</label>
-                    <Input
-                      type="number"
-                      addonAfter="R$"
-                      value={this.state.valueCusto}
-                      onChange={(e) =>
-                        this.setState({
-                          valueCusto: parseFloat(e.target.value),
-                        })
-                      }
-                      size="large"
-                    />
-                  </Col>
-                  <Col span={4}>
-                    <label>Valores Diversos</label>
-                    <Input
-                      type="number"
-                      addonAfter="R$"
-                      value={this.state.valueDiversos}
-                      onChange={(e) =>
-                        this.setState({
-                          valueDiversos: parseFloat(e.target.value),
-                        })
-                      }
-                      size="large"
-                    />
-                  </Col>
-                  <Col span={4}>
-                    <label>Frete</label>
-                    <Input
-                      type="number"
-                      addonAfter="R$"
-                      value={this.state.frete}
-                      onChange={(e) =>
-                        this.setState({ frete: parseFloat(e.target.value) })
-                      }
-                      size="large"
-                    />
-                  </Col>
-                  <Col span={6}>
-                    <label>Valor Atual dos Itens</label>
-                    <Input
-                      type="number"
-                      addonAfter="R$"
-                      value={this.state.valorTotalProdutos}
-                      readOnly
-                      size="large"
-                    />
-                  </Col>
-                  <Col span={6}>
-                    <label>Valor de Venda</label>
-                    <Input
-                      type="number"
-                      addonAfter="R$"
-                      value={this.state.valueSale}
-                      onChange={(e) =>
-                        this.setState({ valueSale: parseFloat(e.target.value) })
-                      }
-                      size="large"
-                    />
-                  </Col>
-                </Row>
-              </>
-            )}
+            <>
+              <Row gutter={10} style={{ marginBottom: 7 }}>
+                <Col span={12}>
+                  <label>
+                    Selecione a Margem de Lucro
+                    <span style={{ color: "red" }}>*</span>
+                  </label>
+                  <TreeSelect
+                    showSearch
+                    style={{ width: "100%" }}
+                    dropdownStyle={{ maxHeight: 150, overflow: "auto" }}
+                    value={this.state.margeLucro}
+                    treeDefaultExpandAll
+                    onChange={(value) => this.handleMarge(value)}
+                    size="large"
+                  >
+                    {this.state.margeLucroData.map((marge) => (
+                      <TreeNode
+                        value={marge.text}
+                        title={marge.text}
+                        key={marge.value}
+                      />
+                    ))}
+                  </TreeSelect>
+                </Col>
+                <Col span={12}>
+                  <label style={{ color: "transparent" }}>
+                    Nova Quantidade
+                  </label>
+                  <Button
+                    icon="calculator"
+                    type="primary"
+                    size="large"
+                    style={{ width: "100%" }}
+                    onClick={() => this.calculatePriceForSale()}
+                  >
+                    CALCULAR PREÇO DE VENDA
+                  </Button>
+                </Col>
+              </Row>
+              <Divider style={{ fontSize: 15, fontWeight: "bold" }}>
+                RESULTADO
+              </Divider>
+              <Row gutter={10}>
+                <Col span={4}>
+                  <label>Valor Unitário</label>
+                  <Input
+                    type="number"
+                    addonAfter="R$"
+                    value={this.state.valueCusto}
+                    onChange={(e) =>
+                      this.setState({
+                        valueCusto: parseFloat(e.target.value),
+                      })
+                    }
+                    size="large"
+                  />
+                </Col>
+                <Col span={4}>
+                  <label>Valores Diversos</label>
+                  <Input
+                    type="number"
+                    addonAfter="R$"
+                    value={this.state.valueDiversos}
+                    onChange={(e) =>
+                      this.setState({
+                        valueDiversos: parseFloat(e.target.value),
+                      })
+                    }
+                    size="large"
+                  />
+                </Col>
+                <Col span={4}>
+                  <label>Frete</label>
+                  <Input
+                    type="number"
+                    addonAfter="R$"
+                    value={this.state.frete}
+                    onChange={(e) =>
+                      this.setState({ frete: parseFloat(e.target.value) })
+                    }
+                    size="large"
+                  />
+                </Col>
+                <Col span={6}>
+                  <label>Valor de Custo - Somatório dos Itens</label>
+                  <Input
+                    type="number"
+                    addonAfter="R$"
+                    value={this.state.valorTotalProdutos}
+                    readOnly
+                    size="large"
+                  />
+                </Col>
+                <Col span={6}>
+                  <label>Valor de Venda</label>
+                  <Input
+                    type="number"
+                    addonAfter="R$"
+                    value={this.state.valueSale}
+                    onChange={(e) =>
+                      this.setState({ valueSale: parseFloat(e.target.value) })
+                    }
+                    size="large"
+                  />
+                </Col>
+              </Row>
+            </>
           </Card>
         </Modal>
 
