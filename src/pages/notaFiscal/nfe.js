@@ -522,11 +522,12 @@ export default class NotaFiscalNFE extends Component {
       });
   };
 
-  findStatusNfe = async (id) => {
+  findStatusNfe = async (id, mode) => {
     this.setState({ modalVerify: true });
     await api
       .post("/invoices/statusNfe", {
         ref: id,
+        mode,
       })
       .then((response) => {
         if (response.data.info === "processando_autorizacao") {
@@ -603,10 +604,10 @@ export default class NotaFiscalNFE extends Component {
         cep_destinatario: this.state.cep_destinatario,
         valor_frete: this.state.valor_frete,
         modalidade_frete: this.state.modalidade_frete,
-        inscricao_estadual_destinatario: this.state
-          .inscricao_estadual_destinatario,
-        informacoes_adicionais_contribuinte: this.state
-          .informacoes_adicionais_contribuinte,
+        inscricao_estadual_destinatario:
+          this.state.inscricao_estadual_destinatario,
+        informacoes_adicionais_contribuinte:
+          this.state.informacoes_adicionais_contribuinte,
         chave_nfe: this.state.chave_nfe,
         cpf_emitente: this.state.cpf_emitente,
         cnpj_destinatario: this.state.cnpj_destinatario,
@@ -1141,60 +1142,48 @@ export default class NotaFiscalNFE extends Component {
     }
     this.state.items[this.state.indexProductToEdit].cfop = this.state.cfop;
     this.state.items[this.state.indexProductToEdit].cest = this.state.cest;
+    this.state.items[this.state.indexProductToEdit].codigo_ncm =
+      this.state.codigo_ncm;
+    this.state.items[this.state.indexProductToEdit].valor_desconto =
+      this.state.valor_desconto;
+    this.state.items[this.state.indexProductToEdit].icms_situacao_tributaria =
+      this.state.icms_situacao_tributaria;
+    this.state.items[this.state.indexProductToEdit].icms_origem =
+      this.state.icms_origem;
+    this.state.items[this.state.indexProductToEdit].pis_situacao_tributaria =
+      this.state.pis_situacao_tributaria;
+    this.state.items[this.state.indexProductToEdit].cofins_situacao_tributaria =
+      this.state.cofins_situacao_tributaria;
+    this.state.items[this.state.indexProductToEdit].icms_aliquota =
+      this.state.icms_aliquota;
     this.state.items[
       this.state.indexProductToEdit
-    ].codigo_ncm = this.state.codigo_ncm;
+    ].icms_modalidade_base_calculo_st =
+      this.state.icms_modalidade_base_calculo_st;
     this.state.items[
       this.state.indexProductToEdit
-    ].valor_desconto = this.state.valor_desconto;
+    ].icms_margem_valor_adicionado_st =
+      this.state.icms_margem_valor_adicionado_st;
+    this.state.items[this.state.indexProductToEdit].icms_aliquota_st =
+      this.state.icms_aliquota_st;
+    this.state.items[this.state.indexProductToEdit].fcp_percentual =
+      this.state.fcp_percentual;
+    this.state.items[this.state.indexProductToEdit].fcp_percentual_retido_st =
+      this.state.fcp_percentual_retido_st;
+    this.state.items[this.state.indexProductToEdit].fcp_percentual_st =
+      this.state.fcp_percentual_st;
+    this.state.items[this.state.indexProductToEdit].ipi_aliquota =
+      this.state.ipi_aliquota;
+    this.state.items[this.state.indexProductToEdit].ipi_situacao_tributaria =
+      this.state.ipi_situacao_tributaria;
+    this.state.items[this.state.indexProductToEdit].pis_aliquota_porcentual =
+      this.state.pis_aliquota_porcentual;
+    this.state.items[this.state.indexProductToEdit].cofins_aliquota_porcentual =
+      this.state.cofins_aliquota_porcentual;
     this.state.items[
       this.state.indexProductToEdit
-    ].icms_situacao_tributaria = this.state.icms_situacao_tributaria;
-    this.state.items[
-      this.state.indexProductToEdit
-    ].icms_origem = this.state.icms_origem;
-    this.state.items[
-      this.state.indexProductToEdit
-    ].pis_situacao_tributaria = this.state.pis_situacao_tributaria;
-    this.state.items[
-      this.state.indexProductToEdit
-    ].cofins_situacao_tributaria = this.state.cofins_situacao_tributaria;
-    this.state.items[
-      this.state.indexProductToEdit
-    ].icms_aliquota = this.state.icms_aliquota;
-    this.state.items[
-      this.state.indexProductToEdit
-    ].icms_modalidade_base_calculo_st = this.state.icms_modalidade_base_calculo_st;
-    this.state.items[
-      this.state.indexProductToEdit
-    ].icms_margem_valor_adicionado_st = this.state.icms_margem_valor_adicionado_st;
-    this.state.items[
-      this.state.indexProductToEdit
-    ].icms_aliquota_st = this.state.icms_aliquota_st;
-    this.state.items[
-      this.state.indexProductToEdit
-    ].fcp_percentual = this.state.fcp_percentual;
-    this.state.items[
-      this.state.indexProductToEdit
-    ].fcp_percentual_retido_st = this.state.fcp_percentual_retido_st;
-    this.state.items[
-      this.state.indexProductToEdit
-    ].fcp_percentual_st = this.state.fcp_percentual_st;
-    this.state.items[
-      this.state.indexProductToEdit
-    ].ipi_aliquota = this.state.ipi_aliquota;
-    this.state.items[
-      this.state.indexProductToEdit
-    ].ipi_situacao_tributaria = this.state.ipi_situacao_tributaria;
-    this.state.items[
-      this.state.indexProductToEdit
-    ].pis_aliquota_porcentual = this.state.pis_aliquota_porcentual;
-    this.state.items[
-      this.state.indexProductToEdit
-    ].cofins_aliquota_porcentual = this.state.cofins_aliquota_porcentual;
-    this.state.items[
-      this.state.indexProductToEdit
-    ].ipi_codigo_enquadramento_legal = this.state.ipi_codigo_enquadramento_legal;
+    ].ipi_codigo_enquadramento_legal =
+      this.state.ipi_codigo_enquadramento_legal;
     this.setState({ cest: "" });
     this.setState({
       descontoRef: this.state.descontoRef - this.state.valor_desconto,
@@ -1312,88 +1301,174 @@ export default class NotaFiscalNFE extends Component {
                   </Tooltip>
                 ) : (
                   <Tooltip title="Consultar status da NFE" placement="top">
-                    <Button
-                      size="small"
-                      type="link"
-                      style={{
-                        backgroundColor: "#4caf50",
-                        color: "#fff",
-                        fontWeight: "bold",
-                        width: "100%",
-                      }}
-                      onClick={() => this.findStatusNfe(info._id)}
+                    <Dropdown
+                      placement="bottomCenter"
+                      overlay={() => (
+                        <Menu>
+                          <Menu.Item
+                            onClick={() => this.findStatusNfe(info._id, "id")}
+                          >
+                            Consultar por ID
+                          </Menu.Item>
+                          <Menu.Item
+                            onClick={() => this.findStatusNfe(info._id, "sale")}
+                          >
+                            Consultar por Venda
+                          </Menu.Item>
+                        </Menu>
+                      )}
                     >
-                      Autorizado
-                    </Button>
+                      <Button
+                        size="small"
+                        type="link"
+                        style={{
+                          backgroundColor: "#4caf50",
+                          color: "#fff",
+                          fontWeight: "bold",
+                          width: "100%",
+                        }}
+                        onClick={() => {}}
+                      >
+                        Autorizado
+                      </Button>
+                    </Dropdown>
                   </Tooltip>
                 )}
               </>
             )}
             {value === "processando_autorizacao" && (
               <Tooltip title="Consultar status da NFE" placement="top">
-                <Button
-                  size="small"
-                  type="link"
-                  style={{
-                    backgroundColor: "#ffeb3b",
-                    color: "#222",
-                    fontWeight: "bold",
-                    width: "100%",
-                  }}
-                  onClick={() => this.findStatusNfe(info._id)}
+                <Dropdown
+                  overlay={() => (
+                    <Menu>
+                      <Menu.Item
+                        onClick={() => this.findStatusNfe(info._id, "id")}
+                      >
+                        Consultar por ID
+                      </Menu.Item>
+                      <Menu.Item
+                        onClick={() => this.findStatusNfe(info._id, "sale")}
+                      >
+                        Consultar por Venda
+                      </Menu.Item>
+                    </Menu>
+                  )}
                 >
-                  Processando
-                </Button>
+                  <Button
+                    size="small"
+                    type="link"
+                    style={{
+                      backgroundColor: "#ffeb3b",
+                      color: "#222",
+                      fontWeight: "bold",
+                      width: "100%",
+                    }}
+                    onClick={() => {}}
+                  >
+                    Processando
+                  </Button>
+                </Dropdown>
               </Tooltip>
             )}
             {value === "erro_autorizacao" && (
               <Tooltip title="Consultar status da NFE" placement="top">
-                <Button
-                  size="small"
-                  type="link"
-                  style={{
-                    backgroundColor: "#f44336",
-                    color: "#fff",
-                    fontWeight: "bold",
-                    width: "100%",
-                  }}
-                  onClick={() => this.findStatusNfe(info._id)}
+                <Dropdown
+                  overlay={() => (
+                    <Menu>
+                      <Menu.Item
+                        onClick={() => this.findStatusNfe(info._id, "id")}
+                      >
+                        Consultar por ID
+                      </Menu.Item>
+                      <Menu.Item
+                        onClick={() => this.findStatusNfe(info._id, "sale")}
+                      >
+                        Consultar por Venda
+                      </Menu.Item>
+                    </Menu>
+                  )}
                 >
-                  Erro Autorização
-                </Button>
+                  <Button
+                    size="small"
+                    type="link"
+                    style={{
+                      backgroundColor: "#f44336",
+                      color: "#fff",
+                      fontWeight: "bold",
+                      width: "100%",
+                    }}
+                    onClick={() => {}}
+                  >
+                    Erro Autorização
+                  </Button>
+                </Dropdown>
               </Tooltip>
             )}
             {value === "denegado" && (
               <Tooltip title="Consultar status da NFE" placement="top">
-                <Button
-                  size="small"
-                  style={{
-                    backgroundColor: "#212121",
-                    color: "#fff",
-                    fontWeight: "bold",
-                    width: "100%",
-                  }}
-                  onClick={() => this.findStatusNfe(info._id)}
+                <Dropdown
+                  overlay={() => (
+                    <Menu>
+                      <Menu.Item
+                        onClick={() => this.findStatusNfe(info._id, "id")}
+                      >
+                        Consultar por ID
+                      </Menu.Item>
+                      <Menu.Item
+                        onClick={() => this.findStatusNfe(info._id, "sale")}
+                      >
+                        Consultar por Venda
+                      </Menu.Item>
+                    </Menu>
+                  )}
                 >
-                  Denegada
-                </Button>
+                  <Button
+                    size="small"
+                    style={{
+                      backgroundColor: "#212121",
+                      color: "#fff",
+                      fontWeight: "bold",
+                      width: "100%",
+                    }}
+                    onClick={() => {}}
+                  >
+                    Denegada
+                  </Button>
+                </Dropdown>
               </Tooltip>
             )}
             {value === "cancelado" && (
               <Tooltip title="Consultar status da NFE" placement="top">
-                <Button
-                  size="small"
-                  type="link"
-                  style={{
-                    backgroundColor: "#f44336",
-                    color: "#fff",
-                    fontWeight: "bold",
-                    width: "100%",
-                  }}
-                  onClick={() => this.findStatusNfe(info._id)}
+                <Dropdown
+                  overlay={() => (
+                    <Menu>
+                      <Menu.Item
+                        onClick={() => this.findStatusNfe(info._id, "id")}
+                      >
+                        Consultar por ID
+                      </Menu.Item>
+                      <Menu.Item
+                        onClick={() => this.findStatusNfe(info._id, "sale")}
+                      >
+                        Consultar por Venda
+                      </Menu.Item>
+                    </Menu>
+                  )}
                 >
-                  Cancelada
-                </Button>
+                  <Button
+                    size="small"
+                    type="link"
+                    style={{
+                      backgroundColor: "#f44336",
+                      color: "#fff",
+                      fontWeight: "bold",
+                      width: "100%",
+                    }}
+                    onClick={() => {}}
+                  >
+                    Cancelada
+                  </Button>
+                </Dropdown>
               </Tooltip>
             )}
           </>
@@ -2882,7 +2957,8 @@ export default class NotaFiscalNFE extends Component {
                     value={this.state.inscricao_estadual_emitente}
                     onChange={(e) =>
                       this.setState({
-                        inscricao_estadual_emitente: e.target.value.toUpperCase(),
+                        inscricao_estadual_emitente:
+                          e.target.value.toUpperCase(),
                       })
                     }
                   />
@@ -2979,7 +3055,8 @@ export default class NotaFiscalNFE extends Component {
                     value={this.state.nome_fantasia_destinatario}
                     onChange={(e) =>
                       this.setState({
-                        nome_fantasia_destinatario: e.target.value.toUpperCase(),
+                        nome_fantasia_destinatario:
+                          e.target.value.toUpperCase(),
                       })
                     }
                   />
@@ -3016,7 +3093,8 @@ export default class NotaFiscalNFE extends Component {
                     value={this.state.inscricao_estadual_destinatario}
                     onChange={(e) =>
                       this.setState({
-                        inscricao_estadual_destinatario: e.target.value.toUpperCase(),
+                        inscricao_estadual_destinatario:
+                          e.target.value.toUpperCase(),
                       })
                     }
                   />
@@ -3179,7 +3257,8 @@ export default class NotaFiscalNFE extends Component {
                     value={this.state.informacoes_adicionais_contribuinte}
                     onChange={(e) =>
                       this.setState({
-                        informacoes_adicionais_contribuinte: e.target.value.toUpperCase(),
+                        informacoes_adicionais_contribuinte:
+                          e.target.value.toUpperCase(),
                       })
                     }
                   />
